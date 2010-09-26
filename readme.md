@@ -12,9 +12,9 @@ The Main Features of Kipunji:
 
  - **Simple URLs:** The URL for your documentation is exactly what you would think it is.  Kipunji will figure out if you wanted a namespace, type, method, etc.:
 
-	http://mydocs.example.com/System
-	http://mydocs.example.com/System.String
-	http://mydocs.example.com/System.String.Trim()
+	* http://mydocs.example.com/System
+	* http://mydocs.example.com/System.String
+	* http://mydocs.example.com/System.String.Trim()
 
 
  - **No Intermediate Generation:**  Many documentation systems have an intermediate step where the XML documentation is converted to static HTML.  Kipunji avoids this by operating directly on the XML.
