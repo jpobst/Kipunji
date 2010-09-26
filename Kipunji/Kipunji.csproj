@@ -1,0 +1,260 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{735EDC54-0129-4F37-8B00-BF2C541C6B94}</ProjectGuid>
+    <ProjectTypeGuids>{F85E285D-A4E0-4152-9332-AB1D724D3325};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Kipunji</RootNamespace>
+    <AssemblyName>Kipunji</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Mobile" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Adapters\BaseAdapter.cs" />
+    <Compile Include="Helpers\Formatter.cs" />
+    <Compile Include="Helpers\IncludeExtensions.cs" />
+    <Compile Include="Adapters\MdocAdapter.cs" />
+    <Compile Include="Helpers\ModelFactory.cs" />
+    <Compile Include="Helpers\RequestDecoder.cs" />
+    <Compile Include="Models\DocumentationModels\AssemblyInfo.cs" />
+    <Compile Include="Models\DocumentationModels\BaseDocModel.cs" />
+    <Compile Include="Models\DocumentationModels\NamespaceModel.cs" />
+    <Compile Include="Models\DocumentationModels\TypeModel.cs" />
+    <Compile Include="Models\DocumentationModels\MemberModel.cs" />
+    <Compile Include="Models\DocumentationModels\Parameter.cs" />
+    <Compile Include="Models\DocumentationModels\Signature.cs" />
+    <Compile Include="Models\Shared\BreadCrumb.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\shCore.css" />
+    <Content Include="Content\shThemeDefault.css" />
+    <Content Include="Docs\Cairo\Antialias.xml" />
+    <Content Include="Docs\Cairo\CairoAPI.xml" />
+    <Content Include="Docs\Cairo\Color.xml" />
+    <Content Include="Docs\Cairo\Content.xml" />
+    <Content Include="Docs\Cairo\Context.xml" />
+    <Content Include="Docs\Cairo\DirectFBSurface.xml" />
+    <Content Include="Docs\Cairo\Distance.xml" />
+    <Content Include="Docs\Cairo\Extend.xml" />
+    <Content Include="Docs\Cairo\FillRule.xml" />
+    <Content Include="Docs\Cairo\Filter.xml" />
+    <Content Include="Docs\Cairo\FontExtents.xml" />
+    <Content Include="Docs\Cairo\FontFace.xml" />
+    <Content Include="Docs\Cairo\FontOptions.xml" />
+    <Content Include="Docs\Cairo\FontSlant.xml" />
+    <Content Include="Docs\Cairo\FontType.xml" />
+    <Content Include="Docs\Cairo\FontWeight.xml" />
+    <Content Include="Docs\Cairo\Format.xml" />
+    <Content Include="Docs\Cairo\GlitzSurface.xml" />
+    <Content Include="Docs\Cairo\Glyph.xml" />
+    <Content Include="Docs\Cairo\Gradient.xml" />
+    <Content Include="Docs\Cairo\Graphics.xml" />
+    <Content Include="Docs\Cairo\HintMetrics.xml" />
+    <Content Include="Docs\Cairo\HintStyle.xml" />
+    <Content Include="Docs\Cairo\ImageSurface.xml" />
+    <Content Include="Docs\Cairo\LinearGradient.xml" />
+    <Content Include="Docs\Cairo\LineCap.xml" />
+    <Content Include="Docs\Cairo\LineJoin.xml" />
+    <Content Include="Docs\Cairo\Matrix.xml" />
+    <Content Include="Docs\Cairo\NativeMethods.xml" />
+    <Content Include="Docs\Cairo\Operator.xml" />
+    <Content Include="Docs\Cairo\Path.xml" />
+    <Content Include="Docs\Cairo\Pattern.xml" />
+    <Content Include="Docs\Cairo\PatternType.xml" />
+    <Content Include="Docs\Cairo\PdfSurface.xml" />
+    <Content Include="Docs\Cairo\Point.xml" />
+    <Content Include="Docs\Cairo\PointD.xml" />
+    <Content Include="Docs\Cairo\PSSurface.xml" />
+    <Content Include="Docs\Cairo\RadialGradient.xml" />
+    <Content Include="Docs\Cairo\Rectangle.xml" />
+    <Content Include="Docs\Cairo\ScaledFont.xml" />
+    <Content Include="Docs\Cairo\SolidPattern.xml" />
+    <Content Include="Docs\Cairo\Status.xml" />
+    <Content Include="Docs\Cairo\SubpixelOrder.xml" />
+    <Content Include="Docs\Cairo\Surface.xml" />
+    <Content Include="Docs\Cairo\SurfacePattern.xml" />
+    <Content Include="Docs\Cairo\SurfaceType.xml" />
+    <Content Include="Docs\Cairo\SvgSurface.xml" />
+    <Content Include="Docs\Cairo\SvgVersion.xml" />
+    <Content Include="Docs\Cairo\TextExtents.xml" />
+    <Content Include="Docs\Cairo\Win32Surface.xml" />
+    <Content Include="Docs\Cairo\XcbSurface.xml" />
+    <Content Include="Docs\Cairo\XlibSurface.xml" />
+    <Content Include="Docs\index.xml" />
+    <Content Include="Docs\ns-Cairo.xml" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="Images\BreadCrumb\bc_bg.png" />
+    <Content Include="Images\BreadCrumb\bc_separator.png" />
+    <Content Include="Images\hatch.png" />
+    <Content Include="Images\headerbg.png" />
+    <Content Include="Images\treebg.png" />
+    <Content Include="Images\Types\error.png" />
+    <Content Include="Images\Types\help.png" />
+    <Content Include="Images\Types\house.png" />
+    <Content Include="Images\Types\namespace.png" />
+    <Content Include="Images\Types\privclass.png" />
+    <Content Include="Images\Types\privdelegate.png" />
+    <Content Include="Images\Types\privenum.png" />
+    <Content Include="Images\Types\privenumeration.png" />
+    <Content Include="Images\Types\privevent.png" />
+    <Content Include="Images\Types\privextension.png" />
+    <Content Include="Images\Types\privfield.png" />
+    <Content Include="Images\Types\privinterface.png" />
+    <Content Include="Images\Types\privmethod.png" />
+    <Content Include="Images\Types\privproperty.png" />
+    <Content Include="Images\Types\privstructure.png" />
+    <Content Include="Images\Types\protclass.png" />
+    <Content Include="Images\Types\protdelegate.png" />
+    <Content Include="Images\Types\protenum.png" />
+    <Content Include="Images\Types\protenumeration.png" />
+    <Content Include="Images\Types\protevent.png" />
+    <Content Include="Images\Types\protextension.png" />
+    <Content Include="Images\Types\protfield.png" />
+    <Content Include="Images\Types\protinterface.png" />
+    <Content Include="Images\Types\protmethod.png" />
+    <Content Include="Images\Types\protoperator.png" />
+    <Content Include="Images\Types\protproperty.png" />
+    <Content Include="Images\Types\protstructure.png" />
+    <Content Include="Images\Types\pubclass.png" />
+    <Content Include="Images\Types\pubdelegate.png" />
+    <Content Include="Images\Types\pubenum.png" />
+    <Content Include="Images\Types\pubenumeration.png" />
+    <Content Include="Images\Types\pubevent.png" />
+    <Content Include="Images\Types\pubextension.png" />
+    <Content Include="Images\Types\pubfield.png" />
+    <Content Include="Images\Types\pubinterface.png" />
+    <Content Include="Images\Types\pubmethod.png" />
+    <Content Include="Images\Types\puboperator.png" />
+    <Content Include="Images\Types\pubproperty.png" />
+    <Content Include="Images\Types\pubstructure.png" />
+    <Content Include="Images\Types\reference.png" />
+    <Content Include="Images\Types\members.png" />
+    <Content Include="Scripts\shBrushCSharp.js" />
+    <Content Include="Scripts\shCore.js" />
+    <Content Include="Views\Home\UnrecognizedRequest.aspx" />
+    <Content Include="Views\Home\Disambiguation.aspx" />
+    <Content Include="Views\Home\Index.aspx" />
+    <Content Include="Views\Home\Namespace.aspx" />
+    <Content Include="Views\Home\Members.aspx" />
+    <Content Include="Views\Home\Type.aspx" />
+    <Content Include="Views\Shared\BreadCrumbBar.ascx" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\jquery-1.4.1.js" />
+    <Content Include="Scripts\jquery-1.4.1.min.js" />
+    <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\MicrosoftAjax.js" />
+    <Content Include="Scripts\MicrosoftAjax.debug.js" />
+    <Content Include="Scripts\MicrosoftMvcAjax.js" />
+    <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
+    <Content Include="Scripts\MicrosoftMvcValidation.js" />
+    <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
+    <Content Include="Views\Account\ChangePassword.aspx" />
+    <Content Include="Views\Account\ChangePasswordSuccess.aspx" />
+    <Content Include="Views\Account\LogOn.aspx" />
+    <Content Include="Views\Account\Register.aspx" />
+    <Content Include="Views\Home\Member.aspx" />
+    <Content Include="Views\Shared\Error.aspx" />
+    <Content Include="Views\Shared\LogOnUserControl.ascx" />
+    <Content Include="Views\Shared\Site.Master" />
+    <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target> -->
+  <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(ProjectDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>23699</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

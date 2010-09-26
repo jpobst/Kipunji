@@ -1,0 +1,41 @@
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>
+        Mono API Reference - <asp:ContentPlaceHolder ID="TitleContent" runat="server" />
+    </title>
+    <%= Html.IncludeFavicon ("~/favicon.ico") %>
+
+    <%= Html.IncludeCSS ("Site.css") %>
+    <%= Html.IncludeCSS ("shCore.css") %>
+    <%= Html.IncludeCSS ("shThemeDefault.css") %>
+
+    <%= Html.IncludeJS ("shCore.js")%>
+    <%= Html.IncludeJS ("shBrushCSharp.js") %>
+</head>
+<body>
+    <div class="page">
+        <div id="header">
+            <div id="title">
+                <h1>
+                    Mono API Reference</h1>
+            </div>
+        </div>
+            <div id="right-content">
+                <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+            </div>
+        <div id="main">
+            <div id="footer">
+            </div>
+        </div>
+    </div>
+        <%= Html.IncludeScript ("SyntaxHighlighter.defaults['gutter'] = false;")%>
+        <%= Html.IncludeScript ("SyntaxHighlighter.defaults['smart-tabs'] = false;")%>
+        <%= Html.IncludeScript ("SyntaxHighlighter.defaults['toolbar'] = false;")%>
+        <%= Html.IncludeScript ("SyntaxHighlighter.all();")%>
+        
+
+</body>
+</html>
