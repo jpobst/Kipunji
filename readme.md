@@ -10,6 +10,13 @@ The Main Features of Kipunji:
 
  - **Attractive, Light, and Quick:** Navigating documentation can be frustrating when it takes each page several seconds to load.  Kipunji documentation is modern looking, extremely lightweight, and loads instantly. 
 
+ - **Simple URLs:** The URL for your documentation is exactly what you would think it is.  Kipunji will figure out if you wanted a namespace, type, method, etc.:
+
+	http://mydocs.example.com/System
+	http://mydocs.example.com/System.String
+	http://mydocs.example.com/System.String.Trim()
+
+
  - **No Intermediate Generation:**  Many documentation systems have an intermediate step where the XML documentation is converted to static HTML.  Kipunji avoids this by operating directly on the XML.
 
  - **Online Editing:** Because Kipunji operates directly on your XML documentation instead of a static HTML copy, online editing is trivial.  **(Not implemented yet)**
