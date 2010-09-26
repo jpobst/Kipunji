@@ -29,5 +29,4 @@ Similar Projects
 Some other similar projects:
 
 - [MDoc](http://www.mono-project.com/Mdoc)
-
 - [SandCastle](http://sandcastle.codeplex.com/)
