@@ -13,7 +13,7 @@
         <p class="indent"><%= Model.FormattedSummary %></p>
         
         <h2>Remarks</h2>
-        <%= Model.FormattedRemarks %>
+        <p class="indent"><%= Model.FormattedRemarks%></p>
 
         <h2>Classes</h2>
 

@@ -31,6 +31,7 @@ namespace Kipunji.Models
 {
 	public class TypeModel : BaseDocModel
 	{
+		public string Assembly { get; set; }
 		public string ParentClass { get; set; }
 		public string Namespace { get; set; }
 		public string BaseType { get; set; }
@@ -82,9 +83,10 @@ namespace Kipunji.Models
 			return Name;
 		}
 
-		public string NamespaceUrl { get { return string.Format ("~/{0}", Namespace); } }
-		public string TypeUrl { get { return string.Format ("~/{0}.{1}", Namespace, Name); } }
-		public string MembersUrl { get { return string.Format ("~/{0}.{1}/Members", Namespace, Name); } }
+		public string NamespaceUrl { get { return string.Format ("~/{0}/{1}", Assembly, Namespace); } }
+		public string TypeUrl { get { return string.Format ("~/{0}/{1}.{2}", Assembly, Namespace, Name); } }
+		public string MembersUrl { get { return string.Format ("~/{0}/{1}.{2}/Members", Assembly, Namespace, Name); } }
+		public string AssemblyUrl { get { return string.Format ("~/{0}", Assembly); } }
 
 		public string TypeIcon {
 			get {
@@ -108,7 +110,7 @@ namespace Kipunji.Models
 
 			// If it's just a member name, take the easy path
 			if (!signature.Contains ('(')) {
-				results.AddRange (Members.Where (p => p.Name.TrimStart ('.') == signature).Cast<BaseDocModel> ());
+				results.AddRange (Members.Where (p => string.Compare (p.Name.TrimStart ('.'), signature, true) == 0).Cast<BaseDocModel> ());
 				return results;
 			}
 
@@ -117,14 +119,14 @@ namespace Kipunji.Models
 
 			// Empty parameter list, another short circuit path
 			if (parameters.Length == 0) {
-				results.AddRange (Members.Where (p => p.Name.TrimStart ('.') == member_name && p.Parameters.Count == 0).Cast<BaseDocModel> ());
+				results.AddRange (Members.Where (p => string.Compare (p.Name.TrimStart ('.'), member_name, true) == 0 && p.Parameters.Count == 0).Cast<BaseDocModel> ());
 				return results;
 			}
 
 			// The hard path, we have to check the types of each of the parameters
 			string[] paras = parameters.Split (',');
 
-			foreach (var member in Members.Where (p => p.Name.TrimStart ('.') == member_name && p.Parameters.Count == paras.Length)) {
+			foreach (var member in Members.Where (p => string.Compare (p.Name.TrimStart ('.'), member_name, true) == 0 && p.Parameters.Count == paras.Length)) {
 				bool match = true;
 
 				for (int i = 0; i < paras.Length; i++) {
@@ -151,6 +153,6 @@ namespace Kipunji.Models
 
 		public override string LongName { get { return string.Format ("{0}.{1}", Namespace, Name); } }
 		public override string Icon { get { return string.Format ("{0}.png", TypeIcon); } }
-		public override string Url { get { return string.Format ("~/{0}.{1}", Namespace, Name); } }
+		public override string Url { get { return TypeUrl; } }
 	}
 }

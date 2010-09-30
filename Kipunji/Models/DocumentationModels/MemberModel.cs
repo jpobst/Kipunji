@@ -30,6 +30,7 @@ namespace Kipunji.Models
 {
 	public class MemberModel : BaseDocModel
 	{
+		public string Assembly { get; set; }
 		public string ParentType { get; set; }
 		public string Namespace { get; set; }
 		public string Type { get; set; }
@@ -57,7 +58,7 @@ namespace Kipunji.Models
 		}
 
 		public string FormattedSummary {
-			get { return Formatter.FormatHtml (Summary); }
+			get { return Formatter.FormatSummary (Summary); }
 		}
 
 		public string FormattedReturnType {
@@ -91,10 +92,11 @@ namespace Kipunji.Models
 			return Name;
 		}
 
-		public string NamespaceUrl { get { return string.Format ("~/{0}", Namespace); } }
-		public string TypeUrl { get { return string.Format ("~/{0}.{1}", Namespace, ParentType); } }
-		public string MembersUrl { get { return string.Format ("~/{0}.{1}/Members", Namespace, ParentType); } }
-		public string MemberUrl { get { return string.Format ("~/{0}.{1}.{2}", Namespace, ParentType, FormattedSignature.TrimStart ('.')); } }
+		public string AssemblyUrl { get { return string.Format ("~/{0}", Assembly); } }
+		public string NamespaceUrl { get { return string.Format ("~/{0}/{1}", Assembly, Namespace); } }
+		public string TypeUrl { get { return string.Format ("~/{0}/{1}.{2}", Assembly, Namespace, ParentType); } }
+		public string MembersUrl { get { return string.Format ("~/{0}/{1}.{2}/Members", Assembly, Namespace, ParentType); } }
+		public string MemberUrl { get { return string.Format ("~/{0}/{1}.{2}.{3}", Assembly, Namespace, ParentType, FormattedSignature.TrimStart ('.')); } }
 
 		public string MemberIcon {
 			get {
@@ -123,6 +125,6 @@ namespace Kipunji.Models
 
 		public override string LongName { get { return string.Format ("{0}.{1}.{2}", Namespace, ParentType, FormattedSignature); } }
 		public override string Icon { get { return string.Format ("~/Images/Types/{0}.png", MemberIcon); } }
-		public override string Url { get { return string.Format ("~/{0}.{1}.{2}", Namespace, ParentType, FormattedSignature.TrimStart ('.')); } }
+		public override string Url { get { return MemberUrl; } }
 	}
 }

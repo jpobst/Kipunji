@@ -38,7 +38,8 @@ namespace Kipunji
 		{
 			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}");
 
-			routes.MapRoute ("typemembers", "{path}/Members", new { controller = "Home", action = "Members" });
+			routes.MapRoute ("typemembers", "{assembly}/{path}/Members", new { controller = "Home", action = "Members" });
+			routes.MapRoute ("assembly", "{assembly}/{path}", new { controller = "Home", action = "Assembly" });
 			routes.MapRoute ("path", "{path}", new { controller = "Home", action = "Index" });
 
 			routes.MapRoute (

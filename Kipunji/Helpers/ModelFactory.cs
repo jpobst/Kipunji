@@ -41,24 +41,24 @@ namespace Kipunji
 			adapter.Initialize (docDirectory);
 		}
 
-		public static Dictionary<string, List<string>> GetIndex ()
+		public static List<AssemblyModel> GetIndex ()
 		{
 			return adapter.GetIndex ();
 		}
 
-		public static NamespaceModel CreateNamespace (string name)
+		public static NamespaceModel CreateNamespace (string assembly, string name)
 		{
-			return adapter.ReadNamespace (name);
+			return adapter.ReadNamespace (assembly, name);
 		}
 
-		public static TypeModel CreateType (string ns, string type, bool shallow)
+		public static TypeModel CreateType (string assembly, string ns, string type, bool shallow)
 		{
-			return adapter.ReadType (ns, type, shallow);
+			return adapter.ReadType (assembly, ns, type, shallow);
 		}
 
-		public static MemberModel CreateMember (string ns, string type, string member)
+		public static MemberModel CreateMember (string assembly, string ns, string type, string member)
 		{
-			return adapter.ReadMember (ns, type, member);
+			return adapter.ReadMember (assembly, ns, type, member);
 		}
 	}
 }

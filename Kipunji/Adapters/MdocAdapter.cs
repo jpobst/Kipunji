@@ -34,40 +34,64 @@ namespace Kipunji.Adapters
 	public class MdocAdapter : BaseAdapter
 	{
 		private string doc_dir;
+		private List<AssemblyModel> index;
 
 		public override void Initialize (string docDirectory)
 		{
 			doc_dir = docDirectory;
+			CreateIndex ();
 		}
 
-		public override Dictionary<string, List<string>> GetIndex ()
+		public override List<AssemblyModel> GetIndex ()
 		{
-			var namespaces = new Dictionary<string, List<string>> (StringComparer.InvariantCultureIgnoreCase);
-			
-			namespaces.Clear ();
-			string file = Path.Combine (doc_dir, "index.xml");
+			return index;
+		}
 
-			XmlDocument doc = new XmlDocument ();
-			doc.Load (file);
+		private void CreateIndex ()
+		{
+			index = new List<AssemblyModel> ();
 
-			foreach (XmlElement xe in doc.DocumentElement.SelectNodes ("Types/Namespace")) {
-				List<string> types = new List<string> ();
+			foreach (string dir in Directory.GetDirectories (doc_dir)) {
+				string index_file = Path.Combine (dir, "index.xml");
 
-				foreach (XmlElement t in xe.SelectNodes ("Type"))
-					types.Add (string.Format ("{0}.{1}", xe.GetAttribute ("Name"), t.GetAttribute ("Name")));
+				if (!File.Exists (index_file))
+					continue;
 
-				namespaces.Add (xe.GetAttribute ("Name"), types);
+				XmlDocument doc = new XmlDocument ();
+				doc.Load (index_file);
+
+				AssemblyModel am = new AssemblyModel ();
+
+				am.Name = GetChildText (doc.DocumentElement, "Title", "index.xml does not have <Title>") + ".dll";
+				am.Remarks = GetChildText (doc.DocumentElement, "Remarks", "");
+
+				foreach (XmlElement xe in doc.DocumentElement.SelectNodes ("Types/Namespace")) {
+					NamespaceModel ns = new NamespaceModel ();
+
+					ns.Assembly = am.Name;
+					ns.Name = xe.GetAttribute ("Name");
+
+					foreach (XmlElement t in xe.SelectNodes ("Type")) {
+						TypeModel tm = new TypeModel ();
+						tm.Assembly = am.Name;
+						tm.Name = t.GetAttribute ("Name");
+
+						ns.Types.Add (tm);
+					}
+
+					am.Namespaces.Add (ns);
+				}
+
+				index.Add (am);
 			}
-
-			return namespaces;
 		}
 
 		// Read in the information needed for NamespaceModel
 		// - Namespace overview + shallow list of Types
-		public override NamespaceModel ReadNamespace (string name)
+		public override NamespaceModel ReadNamespace (string assembly, string name)
 		{
 			string filename = string.Format ("ns-{0}.xml", name);
-			string file = Path.Combine (doc_dir, filename);
+			string file = Path.Combine (Path.Combine (doc_dir, assembly), filename);
 
 			XmlDocument doc = new XmlDocument ();
 			doc.Load (file);
@@ -75,6 +99,7 @@ namespace Kipunji.Adapters
 			NamespaceModel model = new NamespaceModel ();
 			XmlElement xe = doc.DocumentElement;
 
+			model.Assembly = assembly;
 			model.Name = xe.GetAttribute ("Name");
 
 			XmlElement docs = xe["Docs"];
@@ -84,16 +109,16 @@ namespace Kipunji.Adapters
 				model.Remarks = GetChildXml (docs, "remarks", string.Empty);
 			}
 
-			PopulateTypesInNamespace (model);
+			PopulateTypesInNamespace (assembly, model);
 
 			return model;
 		}
 
 		// Read the information need for TypeModel
 		// If !shallow, read in information for all Members
-		public override TypeModel ReadType (string ns, string type, bool shallow)
+		public override TypeModel ReadType (string assembly, string ns, string type, bool shallow)
 		{
-			string path = Path.Combine (doc_dir, ns);
+			string path = Path.Combine (Path.Combine (doc_dir, assembly), ns);
 			string filename = string.Format ("{0}.xml", type);
 			string file = Path.Combine (path, filename);
 
@@ -103,12 +128,13 @@ namespace Kipunji.Adapters
 			XmlElement xe = doc.DocumentElement;
 			TypeModel model = new TypeModel ();
 
+			model.Assembly = assembly;
 			model.Namespace = ns;
 			model.Name = xe.GetAttribute ("Name");
 			model.BaseType = GetChildXml (xe, "Base", string.Empty);
 
 			// Populate the type signature
-			XmlElement sig = (XmlElement)xe.SelectSingleNode ("TypeSignature");
+			XmlElement sig = (XmlElement)xe.SelectSingleNode ("TypeSignature[@Language='C#']");
 
 			if (sig != null) {
 				model.Signature = new Signature (sig);
@@ -144,7 +170,7 @@ namespace Kipunji.Adapters
 		}
 
 		// Read the information need for MemberModel
-		public override MemberModel ReadMember (string ns, string type, string member)
+		public override MemberModel ReadMember (string assembly, string ns, string type, string member)
 		{
 			string path = Path.Combine (doc_dir, ns);
 			string filename = string.Format ("{0}.xml", type);
@@ -164,7 +190,7 @@ namespace Kipunji.Adapters
 			model.ReturnSummary = GetChildXml (xe, "returns", string.Empty);
 
 			// Populate the member signature
-			XmlElement sig = (XmlElement)xe.SelectSingleNode ("MemberSignature");
+			XmlElement sig = (XmlElement)xe.SelectSingleNode ("MemberSignature[@Language='C#']");
 
 			if (sig != null) {
 				model.Signature = new Signature (sig);
@@ -194,9 +220,9 @@ namespace Kipunji.Adapters
 			return model;
 		}
 
-		private void PopulateTypesInNamespace (NamespaceModel model)
+		private void PopulateTypesInNamespace (string assembly, NamespaceModel model)
 		{
-			string ns_file = Path.Combine (doc_dir, "index.xml");
+			string ns_file = Path.Combine (Path.Combine (doc_dir, assembly), "index.xml");
 
 			XmlDocument doc = new XmlDocument ();
 			doc.Load (ns_file);
@@ -211,6 +237,7 @@ namespace Kipunji.Adapters
 			foreach (XmlElement xe in name_space.ChildNodes) {
 				TypeModel t = new TypeModel ();
 
+				t.Assembly = assembly;
 				t.Namespace = model.Name;
 				t.Name = xe.GetAttribute ("Name");
 				t.Kind = xe.GetAttribute ("Kind");
@@ -229,6 +256,7 @@ namespace Kipunji.Adapters
 			foreach (XmlElement x in xe["Members"].ChildNodes) {
 				MemberModel m = new MemberModel ();
 
+				m.Assembly = model.Assembly;
 				m.Namespace = model.Namespace;
 				m.Name = x.GetAttribute ("MemberName");
 				m.Type = GetChildXml (x, "MemberType", string.Empty);
@@ -237,7 +265,7 @@ namespace Kipunji.Adapters
 				m.ReturnSummary = GetChildXml (x, "returns", string.Empty);
 
 				// Populate the member signature
-				XmlElement sig = (XmlElement)x.SelectSingleNode ("MemberSignature");
+				XmlElement sig = (XmlElement)x.SelectSingleNode ("MemberSignature[@Language='C#']");
 
 				if (sig != null) {
 					m.Signature = new Signature (sig);

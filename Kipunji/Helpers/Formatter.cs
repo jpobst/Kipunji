@@ -119,6 +119,14 @@ namespace Kipunji
 			return raw;
 		}
 
+		public static string FormatSummary (string raw)
+		{
+			raw = ParamRef.Replace (raw, "<i><b>${data}</b></i>");
+			raw = SeeRef.Replace (raw, "<a href=\"/${data}\">${data}</a>");
+
+			return raw;
+		}
+
 		public static string CreateTypeLink (string type, string text)
 		{
 			return string.Format ("<a href=\"{0}\">{1}</a>", type, text);

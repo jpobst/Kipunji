@@ -32,11 +32,11 @@ namespace Kipunji
 {
 	public static class RequestDecoder
 	{
-		private static Dictionary<string, List<string>> namespaces;
+		private static List<AssemblyModel> assemblies;
 
 		static RequestDecoder ()
 		{
-			namespaces = ModelFactory.GetIndex ();
+			assemblies = ModelFactory.GetIndex ();
 		}
 
 		public static List<BaseDocModel> Parse (string path, bool shallow)
@@ -52,71 +52,21 @@ namespace Kipunji
 			if (path.Contains ('('))
 				path = path.Substring (0, path.IndexOf ('(')).Trim ();
 
-			// The request exactly matches a namespace, like:
-			// System.Collections.Generic
-			if (namespaces.ContainsKey (path))
-				results.Add (ModelFactory.CreateNamespace (path));
-
 			var paths = ParsePath (path);
-			
-			// Look at each piece of the request to see if it's a namespace
-			// If it is, try the whole thing as a type
-			foreach (var piece in paths) {
-				if (namespaces.ContainsKey (piece)) {
-					var types = namespaces[piece];
 
-					if (types.Contains (path))
-						results.Add (ModelFactory.CreateType (piece, RemovePiece (path, piece), shallow));
-				}
-			}
+			// See if this is an assembly, like:
+			// System.dll
+			var assem = assemblies.Where (p => string.Compare (p.Name, path, true) == 0).FirstOrDefault ();
 
-			if (!path.Contains ('.'))
+			if (assem != null) {
+				results.Add (assem);
 				return results;
-
-			// Try chopping off a member and see if we
-			// we recognize the type
-			var member = path.Substring (path.LastIndexOf ('.') + 1);
-			var full_member = full_path.Substring (path.LastIndexOf ('.') + 1);
-			var no_member_path = path.Substring (0, path.Length - member.Length - 1);
-
-			paths = ParsePath (no_member_path);
-
-			foreach (var piece in paths) {
-				if (namespaces.ContainsKey (piece)) {
-					var types = namespaces[piece];
-
-					// We found a type, check it for the member
-					if (types.Contains (no_member_path)) {
-						var type = ModelFactory.CreateType (piece, RemovePiece (no_member_path, piece), false);
-
-						results.AddRange (type.FindMembers (full_member));
-					}
-				}
 			}
 
+			foreach (var ass in assemblies)
+				results.AddRange (ass.ParseRequest (path));
 
 			return results;
-		}
-
-		public static TypeModel ParseType (string path)
-		{
-			if (path == null)
-				return null;
-
-			var paths = ParsePath (path);
-
-			// Look at each piece of the request to see if it's a namespace
-			// If it is, try the whole thing as a type
-			foreach (var piece in paths) {
-				if (namespaces.ContainsKey (piece)) {
-					var types = namespaces[piece];
-
-					if (types.Contains (path))
-						return ModelFactory.CreateType (piece, RemovePiece (path, piece), false);
-				}
-			}
-
-			return null;
 		}
 
 		// This is going to convert a request down to all possible paths:
@@ -146,16 +96,6 @@ namespace Kipunji
 			paths.Reverse ();
 
 			return paths;
-		}
-
-		// Removes a leading namespace/type piece from a path:
-		// System.String - System = String
-		private static string RemovePiece (string path, string piece)
-		{
-			path = path.Substring (piece.Length);
-			path = path.TrimStart ('.');
-
-			return path;
 		}
 	}
 }

@@ -32,9 +32,9 @@ namespace Kipunji.Adapters
 	public abstract class BaseAdapter
 	{
 		public abstract void Initialize (string docDirectory);
-		public abstract Dictionary<string, List<string>> GetIndex ();
-		public abstract NamespaceModel ReadNamespace (string name);
-		public abstract TypeModel ReadType (string ns, string type, bool shallow);
-		public abstract MemberModel ReadMember (string ns, string type, string member);
+		public abstract List<AssemblyModel> GetIndex ();
+		public abstract NamespaceModel ReadNamespace (string assembly, string name);
+		public abstract TypeModel ReadType (string assembly, string ns, string type, bool shallow);
+		public abstract MemberModel ReadMember (string assembly, string ns, string type, string member);
 	}
 }
