@@ -1,0 +1,8 @@
+Kipunji/bin
+Kipunji/obj
+Kipunji/Docs
+*.pidb
+*.suo
+*.userprefs
+*.user
+*.Publish.xml
