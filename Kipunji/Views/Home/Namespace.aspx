@@ -12,8 +12,10 @@
        
         <p class="indent"><%= Model.FormattedSummary %></p>
         
-        <h2>Remarks</h2>
-        <p class="indent"><%= Model.FormattedRemarks%></p>
+        <% if (Model.HasRemarks) { %>
+	        <h2>Remarks</h2>
+	        <p class="indent"><%= Model.FormattedRemarks%></p>
+	    <% } %>
 
 		<% 
 			var classes = Model.Types.Where (p => p.Kind == "Class");

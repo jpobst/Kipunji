@@ -54,6 +54,16 @@ namespace Kipunji.Models
 			get { return Formatter.FormatHtml (Remarks.TrimEnd ('\n')); }
 		}
 
+		public bool HasRemarks {
+			get {
+				if (String.IsNullOrEmpty (Remarks))
+					return false;
+				if (Remarks == "To be added.")
+					return false;
+				return true;
+			}
+		}
+		
 		public string NamespaceUrl { get { return string.Format ("~/{0}/{1}", Assembly, Name); } }
 		public string AssemblyUrl { get { return string.Format ("~/{0}", Assembly); } }
 
