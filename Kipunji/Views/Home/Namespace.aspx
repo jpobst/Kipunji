@@ -15,53 +15,74 @@
         <h2>Remarks</h2>
         <p class="indent"><%= Model.FormattedRemarks%></p>
 
-        <h2>Classes</h2>
+		<% 
+			var classes = Model.Types.Where (p => p.Kind == "Class");
+			if (classes.Count () > 0) { 
+		%>
+		        <h2>Classes</h2>
+		
+		        <table class="member-list indent">
+		        <% foreach (var prop in classes) { %>
+		        <tr>
+		            <td><img src="<%= Html.ResolveUrl ("~/Images/Types/pubclass.png") %>" /></td>
+		            <td style="width: 150px;"><a href="<%= Html.ResolveUrl (prop.TypeUrl) %>"><%= prop.Name %></a></td>
+		            <td><%= prop.Summary %></td>
+		        </tr>
+		        <% } %>
+		        </table>
+	    <% } %>
 
-        <table class="member-list indent">
-        <% foreach (var prop in Model.Types.Where (p => p.Kind == "Class")) { %>
-        <tr>
-            <td><img src="<%= Html.ResolveUrl ("~/Images/Types/pubclass.png") %>" /></td>
-            <td style="width: 150px;"><a href="<%= Html.ResolveUrl (prop.TypeUrl) %>"><%= prop.Name %></a></td>
-            <td><%= prop.Summary %></td>
-        </tr>
+		<%
+			var structures = Model.Types.Where (p => p.Kind == "Structure");
+			if (structures.Count () > 0) {
+		%>
+		        <h2>Structures</h2>
+		
+		        <table class="member-list indent">
+		        <% foreach (var prop in structures) { %>
+		        <tr>
+		            <td><img src="<%= Html.ResolveUrl ("~/Images/Types/pubstructure.png") %>" /></td>
+		            <td style="width: 150px;"><a href="<%= Html.ResolveUrl (prop.TypeUrl) %>"><%= prop.Name %></a></td>
+		            <td><%= prop.Summary %></td>
+		        </tr>
+		        <% } %>
+		        </table>
         <% } %>
-        </table>
 
-        <h2>Structures</h2>
+		<%
+			var interfaces = Model.Types.Where (p => p.Kind == "Interface");
+			if (interfaces.Count () > 0) {
+		%>
+				<h2>Interfaces</h2>
+		
+		        <table class="member-list indent">
+		        <% foreach (var prop in interfaces) { %>
+		        <tr>
+		            <td><img src="<%= Html.ResolveUrl ("~/Images/Types/pubclass.png") %>" /></td>
+		            <td style="width: 150px;"><a href="<%= Html.ResolveUrl (prop.TypeUrl) %>"><%= prop.Name %></a></td>
+		            <td><%= prop.Summary %></td>
+		        </tr>
+		        <% } %>
+		        </table>
+		<% } %>
 
-        <table class="member-list indent">
-        <% foreach (var prop in Model.Types.Where (p => p.Kind == "Structure")) { %>
-        <tr>
-            <td><img src="<%= Html.ResolveUrl ("~/Images/Types/pubstructure.png") %>" /></td>
-            <td style="width: 150px;"><a href="<%= Html.ResolveUrl (prop.TypeUrl) %>"><%= prop.Name %></a></td>
-            <td><%= prop.Summary %></td>
-        </tr>
-        <% } %>
-        </table>
-
-		<h2>Interfaces</h2>
-
-        <table class="member-list indent">
-        <% foreach (var prop in Model.Types.Where (p => p.Kind == "Interface")) { %>
-        <tr>
-            <td><img src="<%= Html.ResolveUrl ("~/Images/Types/pubclass.png") %>" /></td>
-            <td style="width: 150px;"><a href="<%= Html.ResolveUrl (prop.TypeUrl) %>"><%= prop.Name %></a></td>
-            <td><%= prop.Summary %></td>
-        </tr>
-        <% } %>
-        </table>
-
-        <h2>Enumerations</h2>
-
-        <table class="member-list indent">
-        <% foreach (var prop in Model.Types.Where (p => p.Kind == "Enumeration")) { %>
-        <tr>
-            <td><img src="<%= Html.ResolveUrl ("~/Images/Types/pubenumeration.png") %>" /></td>
-            <td style="width: 150px;"><a href="<%= Html.ResolveUrl (prop.TypeUrl) %>"><%= prop.Name %></a></td>
-            <td><%= prop.Summary %></td>
-        </tr>
-        <% } %>
-        </table>
+		<% 
+			var enumerations = Model.Types.Where (p => p.Kind == "Enumeration");
+			if (enumerations.Count () > 0) {
+		%>
+		        <h2>Enumerations</h2>
+		
+		        <table class="member-list indent">
+		        <% foreach (var prop in enumerations) { %>
+		        <tr>
+		            <td><img src="<%= Html.ResolveUrl ("~/Images/Types/pubenumeration.png") %>" /></td>
+		            <td style="width: 150px;"><a href="<%= Html.ResolveUrl (prop.TypeUrl) %>"><%= prop.Name %></a></td>
+		            <td><%= prop.Summary %></td>
+		        </tr>
+		        <% } %>
+		        </table>
+		<% } %>
+		
     </div>
 
 </asp:Content>
