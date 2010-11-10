@@ -81,6 +81,7 @@ namespace Kipunji.Models
 					case "enum": return "Enumeration";
 					case "class": return "Class";
 					case "struct": return "Structure";
+					case "interface": return "Interface";
 					default: return kind;
 				}
 			}

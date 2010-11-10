@@ -39,6 +39,18 @@
         <% } %>
         </table>
 
+		<h2>Interfaces</h2>
+
+        <table class="member-list indent">
+        <% foreach (var prop in Model.Types.Where (p => p.Kind == "Interface")) { %>
+        <tr>
+            <td><img src="<%= Html.ResolveUrl ("~/Images/Types/pubclass.png") %>" /></td>
+            <td style="width: 150px;"><a href="<%= Html.ResolveUrl (prop.TypeUrl) %>"><%= prop.Name %></a></td>
+            <td><%= prop.Summary %></td>
+        </tr>
+        <% } %>
+        </table>
+
         <h2>Enumerations</h2>
 
         <table class="member-list indent">
