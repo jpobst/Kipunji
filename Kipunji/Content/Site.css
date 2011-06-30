@@ -12,6 +12,11 @@ body
     color: #333333;
 }
 
+code
+{
+    font-size: 1.1em;
+    font-family: Consolas, "Courier New", Monospace;
+}
 a:link
 {
     color: #034af3;
@@ -50,6 +55,7 @@ pre
     -webkit-border-radius: 3px;
     border-radius: 3px;
 }
+
 
 img
 {
@@ -185,7 +191,7 @@ page width. Or, you can specify an exact pixel width. */
 
 .method-header
 {
-    background: url('../Images/hatch.png') repeat-x bottom;
+    background: url('../Images/hatch.png') repeat-x left bottom;
     height: 48px;
     background-color: #FAFBFD;
     font-size: 1.7em;
@@ -199,17 +205,35 @@ page width. Or, you can specify an exact pixel width. */
     border-spacing: 0px;
 }
 
+.member-list p 
+{
+    margin: 5px 0px 5px 0px;
+    line-height: 1.0em;
+}
+
 .member-list td
 {
-    padding: 4px;
     margin: 0px;
     border-bottom: 1px dotted #CCCCCC;
 }
 
 .member-list
 {
-    
+ 
 }
+
+.member-list-signature
+{
+	width: 400px;
+#    padding-left: 65px; 
+#    text-indent: -60px;
+}
+
+.member-list-signature span
+{
+    white-space:nowrap;
+}
+
 /* TAB MENU   
 ----------------------------------------------------------*/
 ul#menu
@@ -407,6 +431,13 @@ div#title
     display: none;
 }
 
+.edit-error 
+{
+	font-weight: bold;
+    color: #ff0000;
+}
+
+
 /* Styles for editor and display helpers
 ----------------------------------------------------------*/
 .display-label,
@@ -550,6 +581,100 @@ div#title
 .breadcrumb a:hover
 {
     text-decoration: underline;
+}
+
+
+div.menubar
+{
+    border: 1px solid #CCDEEC;
+    height: 22px;
+    background-color: #FAFBFD;
+    padding: 1px 1px 1px 1px;
+    width: 700px;
+    margin-bottom: -1px;
+}
+
+ul.menubar
+{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    line-height: 1.4em;
+}
+
+ul.menubar li
+{
+    float: left;
+    height: 20px;
+    border: 1px solid transparent;
+	font-size: .85em;
+     background-color: #FAFBFD;
+}
+
+ul.menubar li:hover
+{
+    background-color: #CCDEEC;
+    border: 1px solid #CCDEEC;
+	-moz-border-radius: 3px;
+}
+
+ul.menubar li a
+{
+    background-position: 4px 2px;
+    background-repeat: no-repeat;
+    display: block;
+    padding: 2px 10px 0px 26px;
+    color: #666666;
+}
+
+ul.menubar a:hover
+{
+    text-decoration: none;
+}
+
+ul.menubar a, ul.menubar a:visited
+{
+    text-decoration: none;
+}
+
+
+.type-signature
+{
+    font-size: 1em;
+    font-family: Consolas, "Courier New", Monospace;
+    border: 1px solid #CCCCCC;
+    background-color: #F7F7F7;
+    padding: 7px;
+    margin: 0 20px 0 20px;
+    line-height: 1.3em;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.signature-start 
+{
+	vertical-align: text-top;
+	white-space:nowrap;
+	padding: 0px;
+}
+
+.signature-cell 
+{
+	vertical-align: text-top;
+	padding: 0px;
+}
+
+.signature-table td
+{
+	border-spacing: 0;
+    border-style: none;
+    border-bottom: 0px dotted #CCC;
+}
+
+.signature-table
+{
+	border-spacing: 0;
 }
 
 .clearer

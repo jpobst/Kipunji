@@ -62,6 +62,31 @@ namespace Kipunji.Models
 			}
 		}
 
+		public bool IsExplicitInterface {
+			get {
+				string[] pieces = Value.Split (' ');
+
+				bool res;
+				if (pieces.Length < 1)
+					return false;
+
+				switch (pieces [0]) {
+				case "public":
+				case "protected":
+				case "private":
+					res = false;
+					break;
+				default:
+					// No visibility modifier means explicit interface...I think, will CWL these for now to see
+					// if there is anything suspicious
+					res = true;
+					break;
+				}
+				
+				return res;
+			}
+		}
+		
 		public string TypeKind {
 			get {
 				if (string.IsNullOrEmpty (Value))
@@ -72,6 +97,18 @@ namespace Kipunji.Models
 				if (pieces.Length < 2)
 					return null;
 
+				switch (pieces [0]) {
+				case "public":
+				case "protected":
+				case "private":
+					break;
+				default:
+					// No visibility modifier means explicit interface, so we return null and let it
+					// use the MemberType value.
+					// CWL it so we can easily track down anything fishy.
+					return null;
+				}
+				
 				string kind = pieces[1];
 
 				if (kind == "static" || kind == "abstract" || kind == "sealed")
@@ -81,7 +118,10 @@ namespace Kipunji.Models
 					case "enum": return "Enumeration";
 					case "class": return "Class";
 					case "struct": return "Structure";
-					default: return kind;
+					case "interface": return "Interface";
+					
+					default: 
+						return kind;
 				}
 			}
 		}

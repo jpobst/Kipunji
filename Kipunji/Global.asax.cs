@@ -37,11 +37,11 @@ namespace Kipunji
 		public static void RegisterRoutes (RouteCollection routes)
 		{
 			routes.IgnoreRoute ("{resource}.axd/{*pathInfo}");
-
-			routes.MapRoute ("typemembers", "{assembly}/{path}/Members", new { controller = "Home", action = "Members" });
-			routes.MapRoute ("assembly", "{assembly}/{path}", new { controller = "Home", action = "Assembly" });
+		
 			routes.MapRoute ("path", "{path}", new { controller = "Home", action = "Index" });
 
+			routes.MapRoute ("typemembers", "{type_path}/Members", new { controller = "Home", action = "Members" });
+								
 			routes.MapRoute (
 			    "Default", // Route name
 			    "{controller}/{action}/{id}", // URL with parameters
@@ -55,7 +55,7 @@ namespace Kipunji
 			AreaRegistration.RegisterAllAreas ();
 
 			RegisterRoutes (RouteTable.Routes);
-			ModelFactory.Initialize (Server.MapPath (@"~\Docs"));
+			ModelFactory.Initialize (Server.MapPath (System.IO.Path.Combine ("~", "Docs")));
 		}
 	}
 }

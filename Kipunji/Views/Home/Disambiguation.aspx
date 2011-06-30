@@ -4,10 +4,6 @@
     <%= ViewData["Title"] %>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
-    <% Html.RenderPartial ("BreadCrumbBar", ViewData["BreadCrumb"]); %>
-        <div class="method-header">
-            <%= Html.Encode ("Disambiguation")%>
-        </div>
      <div class="right-content-pad">
      <p class="indent">Your request matched more than one page.  Please choose your desired page:</p>
         <table class="member-list indent">
@@ -15,6 +11,7 @@
         <tr>
             <td style="width: 16px;"><img src="<%= Html.ResolveUrl (prop.Icon) %>" /></td>
             <td><a href="<%= Html.ResolveUrl (prop.Url) %>"><%= prop.LongName %></a></td>
+            <td><a href="<%= Html.ResolveUrl (prop.Url) %>"><%= ((Kipunji.Models.TypeModel) prop).Assembly %></a></td>
         </tr>
        <% } %>
         </table>

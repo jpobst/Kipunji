@@ -25,13 +25,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web;
 
 namespace Kipunji.Models
 {
 	public class MemberModel : BaseDocModel
 	{
 		public string Assembly { get; set; }
-		public string ParentType { get; set; }
+		public TypeModel ParentType { get; set; }
 		public string Namespace { get; set; }
 		public string Type { get; set; }
 		public string ReturnType { get; set; }
@@ -46,33 +47,63 @@ namespace Kipunji.Models
 			Parameters = new List<Parameter> ();
 		}
 
-		public string FormattedSignature {
+		public string FormattedDisplaySignature {
 			get {
+				if (Type == "Constructor")
+					return Formatter.FormatConstructorDisplaySignature (ParentType, Name, Parameters, false, false);
 				if (Type == "Property")
 					return Formatter.FormatPropertySignature (Name);
 				if (Type == "Field")
 					return Formatter.FormatFieldSignature (Name);
 
-				return Formatter.FormatMethodSignature (Name, Parameters);
+				return Formatter.FormatMethodDisplaySignature (Name, Parameters, false, false);
 			}
 		}
 
-		public string FormattedSummary {
-			get { return Formatter.FormatSummary (Summary); }
+		public string FormattedDisplaySignatureWithParams {
+			get {
+				if (Type == "Constructor")
+					return Formatter.FormatConstructorDisplaySignature (ParentType, Name, Parameters, true, true);
+				if (Type == "Property")
+					return Formatter.FormatPropertySignature (Name);
+				if (Type == "Field")
+					return Formatter.FormatFieldSignature (Name);
+
+				return Formatter.FormatMethodDisplaySignature (Name, Parameters, true, true);
+			}
+		}
+		
+		// Urls for ctors should use the .ctor name, all other types should 
+		// be displayed the same way 
+		public string FormattedUrlSignature {
+			get {
+				if (Type == "Constructor")
+					return Formatter.FormatConstructorUrlSignature (ParentType, Name, Parameters);
+				if (Type == "Property")
+					return Formatter.FormatPropertySignature (Name);
+				if (Type == "Field")
+					return Formatter.FormatFieldSignature (Name);
+
+				return Formatter.FormatMethodUrlSignature (Name, Parameters);
+			}
 		}
 
 		public string FormattedReturnType {
-			get { return Formatter.FormatType (ReturnType); }
+			get { 
+				// ctors don't have a return type.
+				if (ReturnType == null)
+					return null;
+				return Formatter.FormatType (ReturnType, true); 
+			}
 		}
 
-		public string FormattedRemarks {
-			get { return Formatter.FormatHtml (Remarks.TrimEnd ('\n')); }
-		}
-
+		
 		public string FormattedReturnSummary {
-			get { return Formatter.FormatHtml (ReturnSummary.TrimEnd ('\n')); }
+			get { 
+				return Formatter.FormatHtml ("<summary>" + ReturnSummary + "</summary>");
+			}
 		}
-
+		
 		public string FormattedVersionInfo {
 			get {
 				string ret = "This {0} is available in: {1}";
@@ -93,10 +124,10 @@ namespace Kipunji.Models
 		}
 
 		public string AssemblyUrl { get { return string.Format ("~/{0}", Assembly); } }
-		public string NamespaceUrl { get { return string.Format ("~/{0}/{1}", Assembly, Namespace); } }
-		public string TypeUrl { get { return string.Format ("~/{0}/{1}.{2}", Assembly, Namespace, ParentType); } }
-		public string MembersUrl { get { return string.Format ("~/{0}/{1}.{2}/Members", Assembly, Namespace, ParentType); } }
-		public string MemberUrl { get { return string.Format ("~/{0}/{1}.{2}.{3}", Assembly, Namespace, ParentType, FormattedSignature.TrimStart ('.')); } }
+		public string NamespaceUrl { get { return string.Format ("~/{0}", Namespace); } }
+		public string TypeUrl { get { return ParentType.Url; } }
+		public string MembersUrl { get { return string.Format ("{0}/Members", ParentType.Url); } }
+		public string MemberUrl { get { return string.Format ("{0}.{1}", ParentType.Url, FormattedUrlSignature.TrimStart ('.')); } }
 
 		public string MemberIcon {
 			get {
@@ -105,6 +136,7 @@ namespace Kipunji.Models
 				if (Type == "Field" && Visibility == null)
 					value = "pub";	// Generally an Enum member
 				else {
+					
 					switch (Visibility.ToLowerInvariant ()) {
 						case "public": value = "pub"; break;
 						case "protected": value = "prot"; break;
@@ -123,7 +155,7 @@ namespace Kipunji.Models
 			}
 		}
 
-		public override string LongName { get { return string.Format ("{0}.{1}.{2}", Namespace, ParentType, FormattedSignature); } }
+		public override string LongName { get { return string.Format ("{0}.{1}.{2}", Namespace, ParentType, FormattedDisplaySignature); } }
 		public override string Icon { get { return string.Format ("~/Images/Types/{0}.png", MemberIcon); } }
 		public override string Url { get { return MemberUrl; } }
 	}

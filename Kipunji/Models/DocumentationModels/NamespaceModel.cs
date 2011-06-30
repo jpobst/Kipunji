@@ -33,11 +33,11 @@ namespace Kipunji.Models
 	{
 		public List<TypeModel> Types { get; private set; }
 		public string Assembly { get; set; }
+		public bool DisplayInIndex { get; set; }
 
 		public NamespaceModel ()
 		{
 			Types = new List<TypeModel> ();
-			Assembly = string.Empty;
 		}
 
 		public NamespaceModel (string name, string summary) : this ()
@@ -46,16 +46,7 @@ namespace Kipunji.Models
 			Summary = summary;
 		}
 
-		public string FormattedSummary {
-			get { return Formatter.FormatHtml (Summary); }
-		}
-
-		public string FormattedRemarks {
-			get { return Formatter.FormatHtml (Remarks.TrimEnd ('\n')); }
-		}
-
-		public string NamespaceUrl { get { return string.Format ("~/{0}/{1}", Assembly, Name); } }
-		public string AssemblyUrl { get { return string.Format ("~/{0}", Assembly); } }
+		public string NamespaceUrl { get { return string.Format ("~/{0}", Name); } }
 
 		public override string LongName { get { return Name; } }
 		public override string Icon { get { return "namespace.png"; } }
@@ -64,28 +55,53 @@ namespace Kipunji.Models
 		public List<BaseDocModel> ParseRequest (string path)
 		{
 			List<BaseDocModel> results = new List<BaseDocModel> ();
-
+		
+			if (!path.StartsWith (Name) || path.Length <= Name.Length + 1)
+				return results;
+			
+			string remainder = path.Substring (Name.Length + 1);
+			if (remainder.Length < 1)
+				return results;
+			
+			var type = Types.Where (p=> String.Compare (remainder, p.Name, true) == 0).FirstOrDefault ();
+			
+			if (type != null) {
+				results.Add (type);
+				return results;
+			}
+			
+			var matches = Types.Where (p => remainder.StartsWith (p.Name, StringComparison.InvariantCultureIgnoreCase));
+			
+			foreach (var match in matches) {
+				string signature = remainder.Substring (match.Name.Length + 1);
+				results.AddRange (match.FindMembers (signature));
+			}
+			
+			return results;
+			/*
 			// Look for an exact match
 			var ns = Types.Where (p => string.Compare (p.Name, path, true) == 0).FirstOrDefault ();
 
 			// We build a new one, as the index is shallow
 			if (ns != null) {
-				results.Add (ModelFactory.CreateType (Assembly, Name, path, true));
+				results.Add (ModelFactory.CreateType (Name, path, true));
 				return results;
 			}
 
 			// Not an exact match, try breaking into pieces and looking for members
 			foreach (string piece in ParsePath (path)) {
+				Console.WriteLine ("piece:  '{0}'", piece);
 				var type = Types.Where (p => string.Compare (p.Name, piece, true) == 0).FirstOrDefault ();
 
 				if (type != null) {
 					// Index is shallow, load members
-					type = ModelFactory.CreateType (Assembly, Name, type.Name, false);
+					type = ModelFactory.CreateType (Name, type.Name, false);
 					results.AddRange (type.FindMembers (RemovePiece (path, piece)));
 				}
 			}
 
 			return results;
+			*/
 		}
 	}
 }

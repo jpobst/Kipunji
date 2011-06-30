@@ -1,14 +1,14 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
 <%
-    if (Request.IsAuthenticated) {
+    if (Request.IsAuthenticated && Session ["FriendlyName"] != null) {
 %>
-        Welcome <b><%= Html.Encode(Page.User.Identity.Name) %></b>!
-        [ <%= Html.ActionLink("Log Off", "LogOff", "Account") %> ]
+        [ <%= Html.ActionLink("Log Off", "Logout", "User") %> ]
 <%
     }
     else {
 %> 
-        [ <%= Html.ActionLink("Log On", "LogOn", "Account") %> ]
+        [ <%= Html.ActionLink("Log On", "Login", "User", new { returnUrl = Request.Path }, null) %> ]
 <%
     }
 %>
+

@@ -1,6 +1,12 @@
 Kipunji
 =======
 
+*** NOTE: This fork is a WIP, please don't attempt to use it ***
+
+
+
+
+
 Kipunji is a simple, modern ASP.NET MVC web frontend for viewing API reference documentation of .Net libraries.
 
 **Live demo:** [http://kipunji.jpobst.com/](http://kipunji.jpobst.com/)

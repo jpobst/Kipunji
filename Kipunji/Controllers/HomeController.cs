@@ -35,13 +35,13 @@ namespace Kipunji.Controllers
 	public class HomeController : Controller
 	{
 		private string title = "Mono API Reference";
-
+		
 		// This is basically "search", as the user didn't give us an assembly
 		public ActionResult Index (string path)
-		{
+		{	
 			// For root requests, return the home index page
 			if (string.IsNullOrEmpty (path))
-				return Assemblies ();
+				return Namespaces ();
 
 			// Decode the user's request
 			var reqs = RequestDecoder.Parse (path, true);
@@ -56,50 +56,8 @@ namespace Kipunji.Controllers
 				return Disambiguation (reqs);
 
 			var req = reqs[0];
-
+			
 			// Return the correct page for the request type
-			if (req is AssemblyModel)
-				return Assembly ((AssemblyModel)req);
-			if (req is NamespaceModel)
-				return Namespace ((NamespaceModel)req);
-			if (req is TypeModel)
-				return Type ((TypeModel)req);
-			if (req is MemberModel)
-				return Member ((MemberModel)req);
-
-			// This should never be hit, but just in case
-			return UnrecognizedRequest (path);
-		}
-
-		// This is generally an exact request, like:
-		// http://localhost/mscorlib.dll/System
-		public ActionResult Assembly (string assembly, string path)
-		{
-			var index = ModelFactory.GetIndex ();
-
-			// Find the requested assembly
-			var assem = index.Where (p => string.Compare (p.Name, assembly, true) == 0).FirstOrDefault ();
-
-			if (assem == null)
-				return UnrecognizedRequest (string.Format ("{0}/{1}", assembly, path));
-
-			// Decode the user's request
-			var reqs = assem.ParseRequest (path);
-
-			// We couldn't find anything that matched the user's request
-			if (reqs.Count == 0)
-				return UnrecognizedRequest (path);
-
-			// We aren't sure what the user wants,
-			// return a disambiguation page
-			if (reqs.Count > 1)
-				return Disambiguation (reqs);
-
-			var req = reqs[0];
-
-			// Return the correct page for the request type
-			if (req is AssemblyModel)
-				return Assembly ((AssemblyModel)req);
 			if (req is NamespaceModel)
 				return Namespace ((NamespaceModel)req);
 			if (req is TypeModel)
@@ -114,84 +72,52 @@ namespace Kipunji.Controllers
 		// The user has given us a type ("System.String"), and
 		// wants to see the members on the type
 		// ex: http://localhost/mscorlib.dll/System.String/Members
-		public ActionResult Members (string assembly, string path)
+		public ActionResult Members (string type_path)
 		{
-			var index = ModelFactory.GetIndex ();
-
-			// Find the requested assembly
-			var assem = index.Where (p => string.Compare (p.Name, assembly, true) == 0).FirstOrDefault ();
-
-			if (assem == null)
-				return UnrecognizedRequest (string.Format ("{0}/{1}/Members", assembly, path));
-
-			// Decode the user's request
-			var reqs = assem.ParseRequest (path);
-
-			// We couldn't find anything that matched the user's request
-			if (reqs.Count == 0)
-				return UnrecognizedRequest (path + "/Members");
-
-			TypeModel type = null;
+			var types = RequestDecoder.Parse (type_path, true);
 			
-			foreach (BaseDocModel req in reqs)
-				if (req is TypeModel) {
-					type = (TypeModel)req;
-					break;
-				}
-
-			// We couldn't find anything that matched the user's request
-			if (type == null)
-				return UnrecognizedRequest (path + "/Members");
+			if (types.Count > 1)
+				return Disambiguation (types);
+			
+			if (types.Count < 1)
+				return UnrecognizedRequest (type_path);
 
 			// Make a complete type, not a shallow one
-			type = ModelFactory.CreateType (assembly, type.Namespace, type.Name, false);
+			var type = (TypeModel) types [0];
 
 			// Build the breadcrumb menu
 			BreadCrumb bc = new BreadCrumb ();
 
 			bc.Crumbs.Add (new Crumb ("Home", "~", "home"));
-			bc.Crumbs.Add (new Crumb (type.Assembly, type.AssemblyUrl, "reference"));
 			bc.Crumbs.Add (new Crumb (type.Namespace, type.NamespaceUrl, "namespace"));
 			bc.Crumbs.Add (new Crumb (type.Name, type.TypeUrl, type.TypeIcon));
 			bc.Crumbs.Add (new Crumb ("Members", null, "members"));
 
 			ViewData["BreadCrumb"] = bc;
-			ViewData["Title"] = string.Format ("{0} - {1} Members", title, type.Name);
+			ViewData["Title"] = string.Format ("{0} Members", type.DisplayName);
 
 			return View ("Members", type);
 		}
-
+		
 		// The user has not requested anything, show the
 		// list of assemblies we provide documentation for
 		// ex: http://localhost/
-		private ActionResult Assemblies ()
+		private ActionResult Namespaces ()
 		{
-			var index = ModelFactory.GetIndex ();
+			List<NamespaceModel> index;
+
+			if (Request.QueryString ["display_all"] != null)
+			     index = ModelFactory.GetIndex ();
+			else
+		             index = ModelFactory.GetDisplayIndex ();
 
 			BreadCrumb bc = new BreadCrumb ();
 			bc.Crumbs.Add (new Crumb ("Home", "", "home"));
 
 			ViewData["BreadCrumb"] = bc;
-			ViewData["Title"] = string.Format ("{0} - Home", title);
+			ViewData["Title"] = title;
 
 			return View ("Index", index);
-		}
-
-		// The user has passed us an assembly ("mscorlib.dll"),
-		// show the namespaces in that assembly
-		// ex: http://localhost/mscorlib.dll/System
-		private ActionResult Assembly (AssemblyModel model)
-		{
-			// Build the breadcrumb menu
-			BreadCrumb bc = new BreadCrumb ();
-
-			bc.Crumbs.Add (new Crumb ("Home", "~", "home"));
-			bc.Crumbs.Add (new Crumb (model.Name, null, "reference"));
-
-			ViewData["BreadCrumb"] = bc;
-			ViewData["Title"] = string.Format ("{0} - {1} Assembly", title, model.Name);
-
-			return View ("Assembly", model);
 		}
 
 		// The user has passed us a namespace ("System"),
@@ -203,11 +129,10 @@ namespace Kipunji.Controllers
 			BreadCrumb bc = new BreadCrumb ();
 
 			bc.Crumbs.Add (new Crumb ("Home", "~", "home"));
-			bc.Crumbs.Add (new Crumb (ns.Assembly, ns.AssemblyUrl, "reference"));
 			bc.Crumbs.Add (new Crumb (ns.Name, null, "namespace"));
 
 			ViewData["BreadCrumb"] = bc;
-			ViewData["Title"] = string.Format ("{0} - {1} Namespace", title, ns.Name);
+			ViewData["Title"] = string.Format ("{0} Namespace", ns.Name);
 
 			return View ("Namespace", ns);
 		}
@@ -221,12 +146,11 @@ namespace Kipunji.Controllers
 			BreadCrumb bc = new BreadCrumb ();
 
 			bc.Crumbs.Add (new Crumb ("Home", "~", "home"));
-			bc.Crumbs.Add (new Crumb (type.Assembly, type.AssemblyUrl, "reference"));
 			bc.Crumbs.Add (new Crumb (type.Namespace, type.NamespaceUrl, "namespace"));
 			bc.Crumbs.Add (new Crumb (type.Name, null, type.TypeIcon));
 
 			ViewData["BreadCrumb"] = bc;
-			ViewData["Title"] = string.Format ("{0} - {1} Type", title, type.Name);
+			ViewData["Title"] = string.Format ("{0} Type", type.DisplayName);
 
 			return View ("Type", type);
 		}
@@ -240,14 +164,13 @@ namespace Kipunji.Controllers
 			BreadCrumb bc = new BreadCrumb ();
 			
 			bc.Crumbs.Add (new Crumb ("Home", "~", "home"));
-			bc.Crumbs.Add (new Crumb (member.Assembly, member.AssemblyUrl, "reference"));
 			bc.Crumbs.Add (new Crumb (member.Namespace, member.NamespaceUrl, "namespace"));
-			bc.Crumbs.Add (new Crumb (member.ParentType, member.TypeUrl, "pubclass"));
+			bc.Crumbs.Add (new Crumb (member.ParentType.DisplayName, member.TypeUrl, "pubclass"));
 			bc.Crumbs.Add (new Crumb ("Members", member.MembersUrl, "members"));
-			bc.Crumbs.Add (new Crumb (member.FormattedSignature, null, member.MemberIcon));
+			bc.Crumbs.Add (new Crumb (member.FormattedDisplaySignature, null, member.MemberIcon));
 
 			ViewData["BreadCrumb"] = bc;
-			ViewData["Title"] = string.Format ("{0} - {1}.{2}", title, member.ParentType, member.Name);
+			ViewData["Title"] = string.Format ("{0}.{1}", member.ParentType.DisplayName, member.FormattedDisplaySignature);
 
 			return View ("Member", member);
 		}
@@ -264,7 +187,7 @@ namespace Kipunji.Controllers
 			bc.Crumbs.Add (new Crumb ("Disambiguation", null, "help"));
 
 			ViewData["BreadCrumb"] = bc;
-			ViewData["Title"] = string.Format ("{0} - Disambiguation", title);
+			ViewData["Title"] = title;
 
 			return View ("Disambiguation", options);
 		}

@@ -26,6 +26,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
+using System.Text;
 
 namespace Kipunji.Models
 {
@@ -42,6 +44,8 @@ namespace Kipunji.Models
 		public string Kind { get; set; }
 		public string Visibility { get; set; }
 
+		private string display_name;
+		
 		public TypeModel ()
 		{
 			Interfaces = new List<string> ();
@@ -52,18 +56,18 @@ namespace Kipunji.Models
 			get { return Formatter.FormatClassSignature (Name, BaseType, Interfaces); }
 		}
 
-		public string FormattedSummary {
-			get { return Formatter.FormatHtml (Summary); }
-		}
-
 		public string FormattedReturnType {
-			get { return Formatter.FormatType (BaseType); }
+			get { 
+				return Formatter.FormatType (BaseType, true); 
+			}
 		}
-
-		public string FormattedRemarks {
-			get { return Formatter.FormatHtml (Remarks.TrimEnd ('\n')); }
+		/*
+		public string FormattedTypeSignature {
+			get {
+				return Formatter.FormatTypeSignature (Signature);	
+			}
 		}
-
+		*/
 		public string FormattedVersionInfo {
 			get {
 				string ret = "This class is available in: {0}";
@@ -83,9 +87,20 @@ namespace Kipunji.Models
 			return Name;
 		}
 
-		public string NamespaceUrl { get { return string.Format ("~/{0}/{1}", Assembly, Namespace); } }
-		public string TypeUrl { get { return string.Format ("~/{0}/{1}.{2}", Assembly, Namespace, Name); } }
-		public string MembersUrl { get { return string.Format ("~/{0}/{1}.{2}/Members", Assembly, Namespace, Name); } }
+		public string DisplayName {
+			get {
+				if (display_name == null)
+					return Name.Replace ("+", ".");
+				return display_name.Replace ("+", ".");
+			}
+			set {
+				display_name = value;
+			}
+		}
+	
+		public string NamespaceUrl { get { return string.Format ("~/{0}", Namespace); } }
+		public string TypeUrl { get { return string.Format ("~/{0}.{1}", Namespace, HttpUtility.UrlEncode (Name)); } }
+		public string MembersUrl { get { return string.Format ("~/{0}.{1}/Members", Namespace, HttpUtility.UrlEncode (Name)); } }
 		public string AssemblyUrl { get { return string.Format ("~/{0}", Assembly); } }
 
 		public string TypeIcon {
@@ -102,12 +117,17 @@ namespace Kipunji.Models
 			}
 		}
 
+		public string FormattedTypeSignature (string root)
+		{
+			return Formatter.FormatTypeSignature (root, this);	
+		}
+		
 		public List<BaseDocModel> FindMembers (string signature)
 		{
 			List<BaseDocModel> results = new List<BaseDocModel> ();
 
 			signature = signature.Trim ();
-
+		
 			// If it's just a member name, take the easy path
 			if (!signature.Contains ('(')) {
 				results.AddRange (Members.Where (p => string.Compare (p.Name.TrimStart ('.'), signature, true) == 0).Cast<BaseDocModel> ());
@@ -124,14 +144,14 @@ namespace Kipunji.Models
 			}
 
 			// The hard path, we have to check the types of each of the parameters
-			string[] paras = parameters.Split (',');
-
+			string[] paras = ParseParameterTypes (parameters); // parameters.Split (',');
+			
 			foreach (var member in Members.Where (p => string.Compare (p.Name.TrimStart ('.'), member_name, true) == 0 && p.Parameters.Count == paras.Length)) {
 				bool match = true;
 
 				for (int i = 0; i < paras.Length; i++) {
-					string req_param = Formatter.FormatType (paras[i].Trim ());
-					string member_param = Formatter.FormatType (member.Parameters[i].Type.Trim ());
+					string req_param = Formatter.FormatType (paras[i].Trim (), false);
+					string member_param = Formatter.FormatType (member.Parameters[i].Type.Trim (), false);
 
 					if (string.Compare (req_param, member_param, true) != 0) {
 						match = false;
@@ -154,5 +174,37 @@ namespace Kipunji.Models
 		public override string LongName { get { return string.Format ("{0}.{1}", Namespace, Name); } }
 		public override string Icon { get { return string.Format ("{0}.png", TypeIcon); } }
 		public override string Url { get { return TypeUrl; } }
+		
+		private string [] ParseParameterTypes (string p)
+		{
+			var res = new List<string> ();
+			var current = new StringBuilder ();
+			int gdepth = 0;
+			
+			for (int i = 0; i < p.Length; i++) {
+				switch (p [i]) {
+				case '<':
+					gdepth++;
+					break;
+				case '>':
+					gdepth--;
+					break;
+				case ',':
+					// If we are in a generic type, this doesn't matter
+					if (gdepth > 0)
+						break;
+					res.Add (current.ToString ());
+					current.Length = 0;
+					continue;
+				}
+				
+				current.Append (p [i]);
+			}
+			
+			if (current.Length > 0)
+				res.Add (current.ToString ());
+			
+			return res.ToArray ();
+		}
 	}
 }

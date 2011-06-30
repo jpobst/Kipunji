@@ -1,0 +1,15 @@
+
+
+
+* Links to arrays are broken. We should link to the type not the
+  array. ie:
+   <a href=".../System.Byte">System.Byte []</a>
+   instead of:
+   <a href=".../System.Byte []">System.Byte []</a>
+
+
+* Extension methods should be listed for each type, as a seperate
+  list, not as part of the methods.
+
+
+

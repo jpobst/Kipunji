@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using Kipunji.Adapters;
 using Kipunji.Models;
+using System.Threading;
 
 namespace Kipunji
 {
@@ -41,24 +42,40 @@ namespace Kipunji
 			adapter.Initialize (docDirectory);
 		}
 
-		public static List<AssemblyModel> GetIndex ()
+		public static List<NamespaceModel> GetIndex ()
 		{
 			return adapter.GetIndex ();
 		}
 
-		public static NamespaceModel CreateNamespace (string assembly, string name)
+		public static List<NamespaceModel> GetDisplayIndex ()
 		{
-			return adapter.ReadNamespace (assembly, name);
+			return adapter.GetDisplayIndex ();
+		}
+		
+		public static TypeModel CreateType (string ns, string type, bool shallow)
+		{
+			return adapter.GetType (ns, type);
 		}
 
-		public static TypeModel CreateType (string assembly, string ns, string type, bool shallow)
+		public static MemberModel CreateMember (string ns, string type, string member)
 		{
-			return adapter.ReadType (assembly, ns, type, shallow);
+			return adapter.GetMember (ns, type, member);
+		}
+		
+		public static bool IsUserAnEditor (string email)
+		{
+			return adapter.IsEditor (email);	
+		}
+		
+		public static AutoResetEvent BeginEdit (string log)
+		{
+			return adapter.BeginEdit (log);	
 		}
 
-		public static MemberModel CreateMember (string assembly, string ns, string type, string member)
+		public static string GetEcmaTransformXslPath ()
 		{
-			return adapter.ReadMember (assembly, ns, type, member);
+			return adapter.GetEcmaTransformXslPath ();
 		}
+
 	}
 }

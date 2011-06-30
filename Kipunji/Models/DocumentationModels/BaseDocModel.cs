@@ -44,6 +44,43 @@ namespace Kipunji.Models
 			Remarks = string.Empty;
 		}
 
+		
+		public bool HasRemarks {
+			get {
+				if (String.IsNullOrEmpty (Remarks))
+					return false;
+				if (Remarks == "To be added" || Remarks == "To be added.")
+					return false;
+				return true;
+			}
+		}
+		
+		public bool HasSummary {
+			get {
+				if (String.IsNullOrEmpty (Summary))
+					return false;
+				if (Summary == "To be added" || Summary == "To be added.")
+					return false;
+				return true;
+			}
+		}
+		
+		public string FormattedSummary {
+			get { 
+				if (!HasSummary)
+					return String.Empty;
+				return Formatter.FormatHtml ("<summary>" + Summary + "</summary>"); 
+			}
+		}
+
+		public string FormattedRemarks {
+			get { 
+				if (!HasRemarks)
+					return String.Empty;
+				return Formatter.FormatHtml ("<remarks>" + Remarks + "</remarks>"); 
+			}
+		}
+		
 		// This is going to convert a request down to all possible paths:
 		// System.Collections.Generic.List
 		//  - System.Collections.Generic.List

@@ -45,14 +45,21 @@ namespace Kipunji.Models
 
 			XmlElement xe = (XmlElement)docs.SelectSingleNode (string.Format ("param[@name='{0}']", Name));
 
-			if (xe != null)
-				Description = xe.InnerText;
+			if (xe != null) {
+				string desc = xe.InnerText;
+				if (desc != "To be added" && desc != "To be added.")
+					Description = desc;
+			}
 		}
 
 		public string FormattedType {
-			get { return Formatter.FormatType (Type); }
+			get { return Formatter.FormatType (Type, true); }
 		}
 
+		public string FormattedDescription {
+			get { return Formatter.FormatHtml ("<summary>" + Description + "</summary>"); }	
+		}
+		
 		public override string ToString ()
 		{
 			return string.Format ("{0} [{1}]", Name, Type);

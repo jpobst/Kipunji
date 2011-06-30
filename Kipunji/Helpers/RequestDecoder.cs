@@ -32,11 +32,11 @@ namespace Kipunji
 {
 	public static class RequestDecoder
 	{
-		private static List<AssemblyModel> assemblies;
+		private static List<NamespaceModel> namespaces;
 
 		static RequestDecoder ()
 		{
-			assemblies = ModelFactory.GetIndex ();
+			namespaces = ModelFactory.GetIndex ();
 		}
 
 		public static List<BaseDocModel> Parse (string path, bool shallow)
@@ -49,22 +49,22 @@ namespace Kipunji
 			string full_path = path;
 
 			// Chop off any method parameters for now
-			if (path.Contains ('('))
-				path = path.Substring (0, path.IndexOf ('(')).Trim ();
+			// if (path.Contains ('('))
+			//	path = path.Substring (0, path.IndexOf ('(')).Trim ();
 
 			var paths = ParsePath (path);
 
-			// See if this is an assembly, like:
-			// System.dll
-			var assem = assemblies.Where (p => string.Compare (p.Name, path, true) == 0).FirstOrDefault ();
+			// See if this is a namespace, like:
+			// System or System.Text
+			var ns = namespaces.Where (p => string.Compare (p.Name, path, true) == 0).FirstOrDefault ();
 
-			if (assem != null) {
-				results.Add (assem);
+			if (ns != null) {
+				results.Add (ns);
 				return results;
 			}
 
-			foreach (var ass in assemblies)
-				results.AddRange (ass.ParseRequest (path));
+			foreach (var nspc in namespaces)
+				results.AddRange (nspc.ParseRequest (path));
 
 			return results;
 		}

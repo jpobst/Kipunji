@@ -23,6 +23,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,14 +46,6 @@ namespace Kipunji.Models
 			Summary = summary;
 		}
 
-		public string FormattedSummary {
-			get { return Formatter.FormatHtml (Summary); }
-		}
-
-		public string FormattedRemarks {
-			get { return Formatter.FormatHtml (Remarks.TrimEnd ('\n')); }
-		}
-
 		public string AssemblyUrl { get { return string.Format ("~/{0}", Name); } }
 
 		public override string LongName { get { return Name; } }
@@ -61,6 +54,7 @@ namespace Kipunji.Models
 
 		public List<BaseDocModel> ParseRequest (string path)
 		{
+			/*
 			List<BaseDocModel> results = new List<BaseDocModel> ();
 
 			// Look for an exact match
@@ -82,6 +76,10 @@ namespace Kipunji.Models
 			}
 
 			return results;
+			*/
+			
+			return null;
 		}
 	}
 }
+

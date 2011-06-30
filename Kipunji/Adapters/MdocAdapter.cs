@@ -27,29 +27,109 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using System.Linq;
 using Kipunji.Models;
+using System.Threading;
 
 namespace Kipunji.Adapters
 {
 	public class MdocAdapter : BaseAdapter
 	{
+		private static readonly string RESOURCES_DIR = "Resources";
+		private static readonly string EDITORS_FILENAME = "editors";
+		private static readonly string ECMA_TRANSFORM_FILENAME = "mono-ecma-css.xsl";
+		
+		private static AutoResetEvent edit_event = new AutoResetEvent (true);
+		
 		private string doc_dir;
-		private List<AssemblyModel> index;
+		private string resources_dir;
+		private List<string> editors;
+		private List<NamespaceModel> index;
+		private List<NamespaceModel> display_index;
+		
 
 		public override void Initialize (string docDirectory)
 		{
 			doc_dir = docDirectory;
 			CreateIndex ();
+			CreateEditorsList ();
 		}
 
-		public override List<AssemblyModel> GetIndex ()
+		public override List<NamespaceModel> GetIndex ()
 		{
 			return index;
 		}
 
+		public override List<NamespaceModel> GetDisplayIndex ()
+		{
+			return display_index;
+		}
+		
+		public override string GetEcmaTransformXslPath ()
+		{
+			return Path.Combine (RESOURCES_DIR, ECMA_TRANSFORM_FILENAME);
+		}
+		
+		public override bool IsEditor (string email)
+		{
+			return editors.Contains (email);
+		}
+		
+		public override TypeModel GetType (string ns, string type)
+		{
+			NamespaceModel nsmod = index.Where (n => n.Name == ns).FirstOrDefault ();
+			
+			if (nsmod == null)
+				return null;
+			
+			return nsmod.Types.Where (t => t.Name == type).FirstOrDefault ();
+		}
+		
+		public override MemberModel GetMember (string ns, string type, string member)
+		{
+			TypeModel typemod = GetType (ns, type);
+			
+			if (typemod == null)
+				return null;
+			
+			return typemod.Members.Where (m => m.Signature.Value == member).FirstOrDefault ();
+		}
+		
+		private void CreateEditorsList ()
+		{
+			editors = new List<string> ();
+			
+			string editors_file = Path.Combine (RESOURCES_DIR, EDITORS_FILENAME);
+			if (!File.Exists (editors_file)) {
+				Console.Error.WriteLine ("No editors file found. Users will not be allowed to edit data.");
+				return;
+			}
+		
+			using (StreamReader reader = File.OpenText (editors_file)) {
+				string line;
+				while ((line = reader.ReadLine ()) != null) {
+					string n = line.Trim ();
+					if (String.IsNullOrEmpty (n) || n.StartsWith ("#"))
+						continue;
+					editors.Add (line.Trim ());	
+				}
+			}
+		}
+		
+		public override AutoResetEvent BeginEdit (string log)
+		{
+			edit_event.WaitOne ();
+			
+			using (StreamWriter writer = File.AppendText (Path.Combine (doc_dir, "editlog"))) {
+				writer.WriteLine (log);
+			}
+			return edit_event;
+		}
+		
 		private void CreateIndex ()
 		{
-			index = new List<AssemblyModel> ();
+			index = new List<NamespaceModel> ();
+			display_index = new List<NamespaceModel> ();
 
 			foreach (string dir in Directory.GetDirectories (doc_dir)) {
 				string index_file = Path.Combine (dir, "index.xml");
@@ -63,60 +143,72 @@ namespace Kipunji.Adapters
 				AssemblyModel am = new AssemblyModel ();
 
 				am.Name = GetChildText (doc.DocumentElement, "Title", "index.xml does not have <Title>") + ".dll";
-				am.Remarks = GetChildText (doc.DocumentElement, "Remarks", "");
+				am.Remarks = GetChildXml (doc.DocumentElement, "Remarks", "");
 
 				foreach (XmlElement xe in doc.DocumentElement.SelectNodes ("Types/Namespace")) {
-					NamespaceModel ns = new NamespaceModel ();
+					NamespaceModel ns = ReadNamespace (Path.GetFileName (dir), xe.GetAttribute ("Name"));
 
+					if (String.IsNullOrEmpty (xe.GetAttribute ("Name")))
+						continue;
+					
+					if (ns == null)
+						continue;
+					
 					ns.Assembly = am.Name;
-					ns.Name = xe.GetAttribute ("Name");
-
-					foreach (XmlElement t in xe.SelectNodes ("Type")) {
-						TypeModel tm = new TypeModel ();
-						tm.Assembly = am.Name;
-						tm.Name = t.GetAttribute ("Name");
-
-						ns.Types.Add (tm);
-					}
-
-					am.Namespaces.Add (ns);
+					index.Add (ns);
 				}
-
-				index.Add (am);
 			}
+			
+			index.Sort ((l, r) => String.Compare (l.Name, r.Name));
+			display_index.Sort ((l, r) => String.Compare (l.Name, r.Name));
 		}
-
+		
 		// Read in the information needed for NamespaceModel
 		// - Namespace overview + shallow list of Types
-		public override NamespaceModel ReadNamespace (string assembly, string name)
+		public NamespaceModel ReadNamespace (string assembly, string name)
 		{
 			string filename = string.Format ("ns-{0}.xml", name);
 			string file = Path.Combine (Path.Combine (doc_dir, assembly), filename);
 
+			if (!File.Exists (file))
+				return null;
+			
 			XmlDocument doc = new XmlDocument ();
 			doc.Load (file);
-
-			NamespaceModel model = new NamespaceModel ();
+			
 			XmlElement xe = doc.DocumentElement;
-
-			model.Assembly = assembly;
-			model.Name = xe.GetAttribute ("Name");
+			NamespaceModel model = index.Where (ns => ns.Name == name).FirstOrDefault ();
+			bool created = false;
+			if (model == null) {
+				model = new NamespaceModel ();
+				model.Assembly = assembly;
+				model.Name = xe.GetAttribute ("Name");
+				created = true;
+				if (!name.StartsWith ("Microsoft.") && !name.StartsWith ("System.") && name != "System"){
+				    display_index.Add (model);
+  			    }
+			}
 
 			XmlElement docs = xe["Docs"];
 
 			if (docs != null) {
-				model.Summary = GetChildXml (docs, "summary", string.Empty);
-				model.Remarks = GetChildXml (docs, "remarks", string.Empty);
+				if (created || !model.HasSummary)
+					model.Summary = GetChildSummaryOrRemarksXml (docs, "summary", string.Empty);
+				if (created || !model.HasRemarks)
+					model.Remarks = GetChildSummaryOrRemarksXml (docs, "remarks", string.Empty);
 			}
 
 			PopulateTypesInNamespace (assembly, model);
 
+			if (!created)
+				return null;
+			
 			return model;
 		}
 
 		// Read the information need for TypeModel
 		// If !shallow, read in information for all Members
-		public override TypeModel ReadType (string assembly, string ns, string type, bool shallow)
+		public TypeModel ReadType (string assembly, string ns, string type, bool shallow)
 		{
 			string path = Path.Combine (Path.Combine (doc_dir, assembly), ns);
 			string filename = string.Format ("{0}.xml", type);
@@ -130,15 +222,20 @@ namespace Kipunji.Adapters
 
 			model.Assembly = assembly;
 			model.Namespace = ns;
-			model.Name = xe.GetAttribute ("Name");
-			model.BaseType = GetChildXml (xe, "Base", string.Empty);
+			model.Name = type; 
+			model.DisplayName = xe.GetAttribute ("Name");
+			
+			if (xe ["Base"] != null)
+				model.BaseType = GetChildText (xe ["Base"] as XmlElement, "BaseTypeName", string.Empty);
 
 			// Populate the type signature
 			XmlElement sig = (XmlElement)xe.SelectSingleNode ("TypeSignature[@Language='C#']");
 
 			if (sig != null) {
 				model.Signature = new Signature (sig);
-				model.Kind = model.Signature.TypeKind;
+				string sig_kind = model.Signature.TypeKind;
+				if (sig_kind != null)
+					model.Kind = sig_kind;
 				model.Visibility = model.Signature.Visibility;
 			}
 
@@ -153,8 +250,8 @@ namespace Kipunji.Adapters
 			XmlElement docs = xe["Docs"];
 
 			if (docs != null) {
-				model.Summary = GetChildXml (docs, "summary", string.Empty);
-				model.Remarks = GetChildXml (docs, "remarks", string.Empty);
+				model.Summary = GetChildSummaryOrRemarksXml (docs, "summary", string.Empty);
+				model.Remarks = GetChildSummaryOrRemarksXml (docs, "remarks", string.Empty);
 			}
 
 			// Populate the AssemblyInfo
@@ -163,14 +260,14 @@ namespace Kipunji.Adapters
 			if (assem != null)
 				model.AssemblyInfo = new AssemblyInfo (assem);
 
-			if (!shallow)
+			if (!shallow && xe ["Members"] != null)
 				PopulateMembersInType (model, xe);
 
 			return model;
 		}
 
 		// Read the information need for MemberModel
-		public override MemberModel ReadMember (string assembly, string ns, string type, string member)
+		public MemberModel ReadMember (TypeModel parent_type, string assembly, string ns, string type, string member)
 		{
 			string path = Path.Combine (doc_dir, ns);
 			string filename = string.Format ("{0}.xml", type);
@@ -184,10 +281,10 @@ namespace Kipunji.Adapters
 
 			model.Namespace = ns;
 			model.Name = xe.GetAttribute ("MemberName");
-			model.ParentType = type;
-			model.Type = GetChildXml (xe, "MemberType", string.Empty);
+			model.Type = GetChildText (xe, "MemberType", string.Empty);
+
 			model.ReturnType = GetChildText (xe, "ReturnValue", string.Empty);
-			model.ReturnSummary = GetChildXml (xe, "returns", string.Empty);
+			model.ReturnSummary = GetChildSummaryOrRemarksXml (xe, "returns", string.Empty);
 
 			// Populate the member signature
 			XmlElement sig = (XmlElement)xe.SelectSingleNode ("MemberSignature[@Language='C#']");
@@ -207,8 +304,8 @@ namespace Kipunji.Adapters
 
 			// Populate the documentation
 			if (docs != null) {
-				model.Summary = GetChildXml (docs, "summary", string.Empty);
-				model.Remarks = GetChildXml (docs, "remarks", string.Empty);
+				model.Summary = GetChildSummaryOrRemarksXml (docs, "summary", string.Empty);
+				model.Remarks = GetChildSummaryOrRemarksXml (docs, "remarks", string.Empty);
 			}
 
 			// Populate the AssemblyInfo
@@ -227,23 +324,21 @@ namespace Kipunji.Adapters
 			XmlDocument doc = new XmlDocument ();
 			doc.Load (ns_file);
 
-			model.Types.Clear ();
-
 			XmlElement name_space = (XmlElement)doc.SelectSingleNode (string.Format ("Overview/Types/Namespace[@Name='{0}']", model.Name));
 
 			if (name_space == null)
 				return;
 
 			foreach (XmlElement xe in name_space.ChildNodes) {
-				TypeModel t = new TypeModel ();
+				TypeModel t = ReadType (assembly, model.Name, xe.GetAttribute ("Name"), false);
 
-				t.Assembly = assembly;
-				t.Namespace = model.Name;
+				string name = xe.GetAttribute ("DisplayName");
+				if (!String.IsNullOrEmpty (name))
+					t.DisplayName = name;
 				t.Name = xe.GetAttribute ("Name");
-				t.Kind = xe.GetAttribute ("Kind");
-				t.Summary = GetChildXml (xe, "summary", string.Empty);
-				
-				model.Types.Add (t);
+
+				if (model.Types.Where (m => m.Name == t.Name).FirstOrDefault () == null)
+					model.Types.Add (t);
 			}
 		}
 
@@ -253,17 +348,25 @@ namespace Kipunji.Adapters
 
 			string type_name = xe.GetAttribute ("Name");
 
-			foreach (XmlElement x in xe["Members"].ChildNodes) {
+			foreach (XmlNode n in xe["Members"].ChildNodes) {
+				
+				XmlElement x = n as XmlElement;
+				if (x == null)
+					continue;
+				
 				MemberModel m = new MemberModel ();
 
 				m.Assembly = model.Assembly;
 				m.Namespace = model.Namespace;
 				m.Name = x.GetAttribute ("MemberName");
-				m.Type = GetChildXml (x, "MemberType", string.Empty);
-				m.ParentType = model.Name;
-				m.ReturnType = GetChildText (x, "ReturnValue", string.Empty);
-				m.ReturnSummary = GetChildXml (x, "returns", string.Empty);
+				m.Type = GetChildText (x, "MemberType", string.Empty);
+				m.ParentType = model;
+				XmlElement rv = (XmlElement) x.SelectSingleNode ("ReturnValue");
+				if (rv != null)
+					m.ReturnType = GetChildText (rv, "ReturnType", "");
 
+				m.ReturnSummary = GetChildSummaryOrRemarksXml (x, "returns", string.Empty);
+			
 				// Populate the member signature
 				XmlElement sig = (XmlElement)x.SelectSingleNode ("MemberSignature[@Language='C#']");
 
@@ -282,8 +385,8 @@ namespace Kipunji.Adapters
 
 				// Populate the documentation
 				if (docs != null) {
-					m.Summary = GetChildXml (docs, "summary", string.Empty);
-					m.Remarks = GetChildXml (docs, "remarks", string.Empty);
+					m.Summary = GetChildSummaryOrRemarksXml (docs, "summary", string.Empty);
+					m.Remarks = GetChildSummaryOrRemarksXml (docs, "remarks", string.Empty);
 				}
 
 				// Populate the AssemblyInfo
@@ -303,7 +406,20 @@ namespace Kipunji.Adapters
 			if (x == null)
 				return defaultValue;
 
-			return x.InnerXml;
+			return x.OuterXml;
+		}
+		
+		private static string GetChildSummaryOrRemarksXml (XmlElement xe, string child, string defaultValue)
+		{
+			XmlElement x = xe [child];
+			
+			if (x == null)
+				return null;
+			
+			string inner = x.InnerText.Trim ();
+			if (inner == "To be added" || inner == "To be added.")
+				return null;
+			return inner;
 		}
 
 		private static string GetChildText (XmlElement xe, string child, string defaultValue)
@@ -313,7 +429,7 @@ namespace Kipunji.Adapters
 			if (x == null)
 				return defaultValue;
 
-			return x.InnerText;
+			return x.InnerXml;
 		}
 	}
 }
