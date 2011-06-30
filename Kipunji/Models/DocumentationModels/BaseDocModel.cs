@@ -25,6 +25,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web.Mvc;
 
 namespace Kipunji.Models
 {
@@ -65,18 +66,20 @@ namespace Kipunji.Models
 			}
 		}
 		
-		public string FormattedSummary {
+		public MvcHtmlString FormattedSummary {
 			get { 
 				if (!HasSummary)
-					return String.Empty;
+					return MvcHtmlString.Empty;
+
 				return Formatter.FormatHtml ("<summary>" + Summary + "</summary>"); 
 			}
 		}
 
-		public string FormattedRemarks {
+		public MvcHtmlString FormattedRemarks {
 			get { 
 				if (!HasRemarks)
-					return String.Empty;
+					return MvcHtmlString.Empty;
+
 				return Formatter.FormatHtml ("<remarks>" + Remarks + "</remarks>"); 
 			}
 		}

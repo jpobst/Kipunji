@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web;
+using System.Web.Mvc;
 
 namespace Kipunji.Models
 {
@@ -47,7 +48,7 @@ namespace Kipunji.Models
 			Parameters = new List<Parameter> ();
 		}
 
-		public string FormattedDisplaySignature {
+		public MvcHtmlString FormattedDisplaySignature {
 			get {
 				if (Type == "Constructor")
 					return Formatter.FormatConstructorDisplaySignature (ParentType, Name, Parameters, false, false);
@@ -60,7 +61,7 @@ namespace Kipunji.Models
 			}
 		}
 
-		public string FormattedDisplaySignatureWithParams {
+		public MvcHtmlString FormattedDisplaySignatureWithParams {
 			get {
 				if (Type == "Constructor")
 					return Formatter.FormatConstructorDisplaySignature (ParentType, Name, Parameters, true, true);
@@ -75,7 +76,7 @@ namespace Kipunji.Models
 		
 		// Urls for ctors should use the .ctor name, all other types should 
 		// be displayed the same way 
-		public string FormattedUrlSignature {
+		public MvcHtmlString FormattedUrlSignature {
 			get {
 				if (Type == "Constructor")
 					return Formatter.FormatConstructorUrlSignature (ParentType, Name, Parameters);
@@ -88,7 +89,7 @@ namespace Kipunji.Models
 			}
 		}
 
-		public string FormattedReturnType {
+		public MvcHtmlString FormattedReturnType {
 			get { 
 				// ctors don't have a return type.
 				if (ReturnType == null)
@@ -97,8 +98,8 @@ namespace Kipunji.Models
 			}
 		}
 
-		
-		public string FormattedReturnSummary {
+
+		public MvcHtmlString FormattedReturnSummary {
 			get { 
 				return Formatter.FormatHtml ("<summary>" + ReturnSummary + "</summary>");
 			}
@@ -127,7 +128,7 @@ namespace Kipunji.Models
 		public string NamespaceUrl { get { return string.Format ("~/{0}", Namespace); } }
 		public string TypeUrl { get { return ParentType.Url; } }
 		public string MembersUrl { get { return string.Format ("{0}/Members", ParentType.Url); } }
-		public string MemberUrl { get { return string.Format ("{0}.{1}", ParentType.Url, FormattedUrlSignature.TrimStart ('.')); } }
+		public string MemberUrl { get { return string.Format ("{0}.{1}", ParentType.Url, FormattedUrlSignature.ToString ().TrimStart ('.')); } }
 
 		public string MemberIcon {
 			get {

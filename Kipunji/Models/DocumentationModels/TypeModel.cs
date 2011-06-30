@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Text;
+using System.Web.Mvc;
 
 namespace Kipunji.Models
 {
@@ -56,7 +57,7 @@ namespace Kipunji.Models
 			get { return Formatter.FormatClassSignature (Name, BaseType, Interfaces); }
 		}
 
-		public string FormattedReturnType {
+		public MvcHtmlString FormattedReturnType {
 			get { 
 				return Formatter.FormatType (BaseType, true); 
 			}
@@ -117,7 +118,7 @@ namespace Kipunji.Models
 			}
 		}
 
-		public string FormattedTypeSignature (string root)
+		public MvcHtmlString FormattedTypeSignature (string root)
 		{
 			return Formatter.FormatTypeSignature (root, this);	
 		}
@@ -150,8 +151,8 @@ namespace Kipunji.Models
 				bool match = true;
 
 				for (int i = 0; i < paras.Length; i++) {
-					string req_param = Formatter.FormatType (paras[i].Trim (), false);
-					string member_param = Formatter.FormatType (member.Parameters[i].Type.Trim (), false);
+					string req_param = Formatter.FormatType (paras[i].Trim (), false).ToString ();
+					string member_param = Formatter.FormatType (member.Parameters[i].Type.Trim (), false).ToString ();
 
 					if (string.Compare (req_param, member_param, true) != 0) {
 						match = false;

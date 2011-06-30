@@ -167,7 +167,7 @@ namespace Kipunji.Controllers
 			bc.Crumbs.Add (new Crumb (member.Namespace, member.NamespaceUrl, "namespace"));
 			bc.Crumbs.Add (new Crumb (member.ParentType.DisplayName, member.TypeUrl, "pubclass"));
 			bc.Crumbs.Add (new Crumb ("Members", member.MembersUrl, "members"));
-			bc.Crumbs.Add (new Crumb (member.FormattedDisplaySignature, null, member.MemberIcon));
+			bc.Crumbs.Add (new Crumb (member.FormattedDisplaySignature.ToString (), null, member.MemberIcon));
 
 			ViewData["BreadCrumb"] = bc;
 			ViewData["Title"] = string.Format ("{0}.{1}", member.ParentType.DisplayName, member.FormattedDisplaySignature);

@@ -25,6 +25,7 @@
 
 using System;
 using System.Xml;
+using System.Web.Mvc;
 
 namespace Kipunji.Models
 {
@@ -52,11 +53,11 @@ namespace Kipunji.Models
 			}
 		}
 
-		public string FormattedType {
+		public MvcHtmlString FormattedType {
 			get { return Formatter.FormatType (Type, true); }
 		}
 
-		public string FormattedDescription {
+		public MvcHtmlString FormattedDescription {
 			get { return Formatter.FormatHtml ("<summary>" + Description + "</summary>"); }	
 		}
 		

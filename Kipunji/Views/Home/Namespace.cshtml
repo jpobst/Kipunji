@@ -1,0 +1,75 @@
+﻿@model Kipunji.Models.NamespaceModel
+
+     <div class="right-content-pad">
+       
+        <p class="indent">@Model.FormattedSummary</p>
+        
+        @if (Model.HasRemarks) {
+	        <h2>Remarks</h2>
+	        <p class="indent">@Model.FormattedRemarks</p>
+	    }
+
+		@{
+            var classes = Model.Types.Where (p => p.Kind == "Class");
+            var structures = Model.Types.Where (p => p.Kind == "Structure");
+            var interfaces = Model.Types.Where (p => p.Kind == "Interface");
+            var enumerations = Model.Types.Where (p => p.Kind == "Enumeration");
+        } 
+			
+		@if (classes.Count () > 0) { 
+		        <h2>Types</h2>
+		
+		        <table class="member-list indent">
+		        @foreach (var prop in classes) {
+		        <tr>
+		            <td><img src="@Html.ResolveUrl("~/Images/Types/pubclass.png")" /></td>
+					<td style="width: 150px;"><a href="@Html.ResolveUrl(prop.TypeUrl)">@HttpUtility.HtmlEncode(prop.DisplayName)</a></td>
+		            <td><span class="summary">@prop.FormattedSummary</span></td>
+		        </tr>
+		        }
+		        </table>
+	    }
+
+		@if (structures.Count () > 0) {
+		        <h2>Structures</h2>
+		
+		        <table class="member-list indent">
+		        @foreach (var prop in structures) {
+		        <tr>
+		            <td><img src="@Html.ResolveUrl("~/Images/Types/pubstructure.png")" /></td>
+		            <td style="width: 150px;"><a href="@Html.ResolveUrl(prop.TypeUrl)">@HttpUtility.HtmlEncode(prop.DisplayName)</a></td>
+		            <td><span class="summary">@prop.FormattedSummary</span></td>
+		        </tr>
+		        }
+		        </table>
+        }
+
+		@if (interfaces.Count () > 0) {
+				<h2>Interfaces</h2>
+		
+		        <table class="member-list indent">
+		        @foreach (var prop in interfaces) {
+		        <tr>
+		            <td><img src="@Html.ResolveUrl("~/Images/Types/pubinterface.png")" /></td>
+		            <td style="width: 150px;"><a href="@Html.ResolveUrl(prop.TypeUrl)">@HttpUtility.HtmlEncode(prop.DisplayName)</a></td>
+		            <td><span class="summary">@prop.FormattedSummary</span></td>
+		        </tr>
+		        }
+		        </table>
+		}
+
+		@if (enumerations.Count () > 0) {
+		        <h2>Enumerations</h2>
+		
+		        <table class="member-list indent">
+		        @foreach (var prop in enumerations) {
+		        <tr>
+		            <td><img src="@Html.ResolveUrl("~/Images/Types/pubenumeration.png")" /></td>
+		            <td style="width: 150px;"><a href="@Html.ResolveUrl(prop.TypeUrl)">@HttpUtility.HtmlEncode(prop.DisplayName)</a></td>
+		            <td><span class="summary">@prop.FormattedSummary</span></td>
+		        </tr>
+		        }
+		        </table>
+		}
+		
+    </div>

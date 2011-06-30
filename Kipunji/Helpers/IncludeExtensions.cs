@@ -28,30 +28,30 @@ using System.Web.Mvc;
 
 public static class IncludeExtensions
 {
-	public static string IncludeCSS (this HtmlHelper html, string cssFile)
+	public static MvcHtmlString IncludeCSS (this HtmlHelper html, string cssFile)
 	{
 		string cssPath = cssFile.Contains ("~") ? cssFile : ("~/Content/" + cssFile);
 		string url = html.ResolveUrl (cssPath);
-		return string.Format ("<link type=\"text/css\" rel=\"stylesheet\" href=\"{0}\" />\n", url);
+		return new MvcHtmlString (string.Format ("<link type=\"text/css\" rel=\"stylesheet\" href=\"{0}\" />\n", url));
 	}
 
-	public static string IncludeJS (this HtmlHelper html, string jsFile)
+	public static MvcHtmlString IncludeJS (this HtmlHelper html, string jsFile)
 	{
 		string jsPath = jsFile.Contains ("~") ? jsFile : ("~/Scripts/" + jsFile);
 		string url = html.ResolveUrl (jsPath);
-		return string.Format ("<script type=\"text/javascript\" src=\"{0}\"></script>\n", url);
+		return new MvcHtmlString (string.Format ("<script type=\"text/javascript\" src=\"{0}\"></script>\n", url));
 	}
 
-	public static string IncludeFavicon (this HtmlHelper html, string icon)
+	public static MvcHtmlString IncludeFavicon (this HtmlHelper html, string icon)
 	{
 		string iconPath = icon.Contains ("~") ? icon : ("~/" + icon);
 		string url = html.ResolveUrl (iconPath);
-		return string.Format ("<link rel=\"shortcut icon\" href=\"{0}\" />\n", url);
+		return new MvcHtmlString (string.Format ("<link rel=\"shortcut icon\" href=\"{0}\" />\n", url));
 	}
 
-	public static string IncludeScript (this HtmlHelper html, string script)
+	public static MvcHtmlString IncludeScript (this HtmlHelper html, string script)
 	{
-		return string.Format ("<script type=\"text/javascript\">{0}</script>\n", script);
+		return new MvcHtmlString (string.Format ("<script type=\"text/javascript\">{0}</script>\n", script));
 	}
 
 	public static string ResolveUrl (this HtmlHelper html, string relativeUrl)

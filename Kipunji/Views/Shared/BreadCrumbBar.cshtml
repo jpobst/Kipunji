@@ -1,0 +1,26 @@
+﻿@model Kipunji.Models.BreadCrumb
+
+@*
+This is what we are building...
+
+<ul class="breadcrumb">
+  <li><a href="/MonkeyWrench/builds">Projects</a></li>
+  <li>Mono (Trunk)</li>
+</ul>
+*@
+
+@helper AddClass (Kipunji.Models.Crumb crumb) {
+    if (!string.IsNullOrWhiteSpace (crumb.CssClass)) {
+        @MvcHtmlString.Create(string.Format("class=\"{0}\"", crumb.CssClass))
+    }
+}
+
+<ul class="breadcrumb">
+@foreach(var crumb in Model.Crumbs) {
+    if(!string.IsNullOrEmpty (crumb.Url)) {
+        <li @AddClass(crumb)><a href="@Url.Content(crumb.Url)">@crumb.Text</a></li>
+    } else {
+        <li @AddClass(crumb)>@crumb.Text</li>
+    }
+}
+</ul>

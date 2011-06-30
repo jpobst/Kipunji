@@ -80,82 +80,82 @@ namespace Kipunji.Controllers
 			return reqs [0];
 		}
 		
-		private string GetContent (BaseDocModel model, string id, string type, bool formatted, string text)
-		{
-			if (type == "summary" || type == "summary-type") {
-				if (text != null)
-					model.Summary = text;
-				if (formatted)
-					return model.FormattedSummary;
-				return model.Summary;
-			} else if (type == "remarks" || type == "remarks-type") {
-				if (text != null)
-					model.Remarks = text;
-				if (formatted)
-					return model.FormattedRemarks;
-				return model.Remarks;
-			} else if (type == "description-params") {
-				string indexstr = Request.Form ["index"];
-				int index;
-				if (!Int32.TryParse (indexstr, out index) || index < 0) {
-					Response.StatusCode = 500;
-					Response.StatusDescription = "Invalid parameter index. It was not a positive integer.";
-					return null;
-				}
-				MemberModel method_model = model as MemberModel;
-				if (method_model == null) {
-					Response.StatusCode = 500;
-					Response.StatusDescription = "Invalid parameter. Model was not a member.";
-					return null;
-				}
+		//private string GetContent (BaseDocModel model, string id, string type, bool formatted, string text)
+		//{
+		//        if (type == "summary" || type == "summary-type") {
+		//                if (text != null)
+		//                        model.Summary = text;
+		//                if (formatted)
+		//                        return model.FormattedSummary;
+		//                return model.Summary;
+		//        } else if (type == "remarks" || type == "remarks-type") {
+		//                if (text != null)
+		//                        model.Remarks = text;
+		//                if (formatted)
+		//                        return model.FormattedRemarks;
+		//                return model.Remarks;
+		//        } else if (type == "description-params") {
+		//                string indexstr = Request.Form ["index"];
+		//                int index;
+		//                if (!Int32.TryParse (indexstr, out index) || index < 0) {
+		//                        Response.StatusCode = 500;
+		//                        Response.StatusDescription = "Invalid parameter index. It was not a positive integer.";
+		//                        return null;
+		//                }
+		//                MemberModel method_model = model as MemberModel;
+		//                if (method_model == null) {
+		//                        Response.StatusCode = 500;
+		//                        Response.StatusDescription = "Invalid parameter. Model was not a member.";
+		//                        return null;
+		//                }
 				
-				if (text != null)
-					method_model.Parameters [index].Description = text;
-				return method_model.Parameters [index].Description;
-			} else if (type == "summary-return") {
-				MemberModel method_model = model as MemberModel;
-				if (method_model == null) {
-					Response.StatusCode = 500;
-					Response.StatusDescription = "Invalid return item. Model was not a member.";
-					return null;
-				}
+		//                if (text != null)
+		//                        method_model.Parameters [index].Description = text;
+		//                return method_model.Parameters [index].Description;
+		//        } else if (type == "summary-return") {
+		//                MemberModel method_model = model as MemberModel;
+		//                if (method_model == null) {
+		//                        Response.StatusCode = 500;
+		//                        Response.StatusDescription = "Invalid return item. Model was not a member.";
+		//                        return null;
+		//                }
 
-				if (text != null)
-					method_model.ReturnSummary = text;
-				return method_model.ReturnSummary;
-			} else if (type == "remarks-member") {
-				MemberModel method_model = model as MemberModel;
-				if (method_model == null) {
-					Response.StatusCode = 500;
-					Response.StatusDescription = "Invalid member remarks. Model was not a member.";
-					return null;
-				}
+		//                if (text != null)
+		//                        method_model.ReturnSummary = text;
+		//                return method_model.ReturnSummary;
+		//        } else if (type == "remarks-member") {
+		//                MemberModel method_model = model as MemberModel;
+		//                if (method_model == null) {
+		//                        Response.StatusCode = 500;
+		//                        Response.StatusDescription = "Invalid member remarks. Model was not a member.";
+		//                        return null;
+		//                }
 				
-				if (text != null)
-					method_model.Remarks = text;
-				if (formatted)
-					return method_model.FormattedRemarks;
-				return method_model.Remarks;
-			} else if (type == "summary-member") {
-				MemberModel method_model = model as MemberModel;
-				if (method_model == null) {
-					Response.StatusCode = 500;
-					Response.StatusDescription = "Invalid member remarks. Model was not a member.";
-					return null;
-				}
+		//                if (text != null)
+		//                        method_model.Remarks = text;
+		//                if (formatted)
+		//                        return method_model.FormattedRemarks;
+		//                return method_model.Remarks;
+		//        } else if (type == "summary-member") {
+		//                MemberModel method_model = model as MemberModel;
+		//                if (method_model == null) {
+		//                        Response.StatusCode = 500;
+		//                        Response.StatusDescription = "Invalid member remarks. Model was not a member.";
+		//                        return null;
+		//                }
 				
-				if (text != null)
-					method_model.Summary = text;
-				if (formatted)
-					return method_model.FormattedSummary;
-				return method_model.Summary;
-			} 
+		//                if (text != null)
+		//                        method_model.Summary = text;
+		//                if (formatted)
+		//                        return method_model.FormattedSummary;
+		//                return method_model.Summary;
+		//        } 
 			
-			Response.StatusCode = 500;
-			Response.StatusDescription = String.Format ("Invalid type '{0}'. Must be summary or remarks.", type);	
+		//        Response.StatusCode = 500;
+		//        Response.StatusDescription = String.Format ("Invalid type '{0}'. Must be summary or remarks.", type);	
 			
-			return null;
-		}
+		//        return null;
+		//}
 		
 		public ActionResult Data ()
 		{
@@ -180,7 +180,7 @@ namespace Kipunji.Controllers
 				return Json (error);
 			}
 			
-			string content = GetContent (model, id, type, false, null);
+			string content = null; //GetContent (model, id, type, false, null);
 			if (content == null) {
 				return Content (String.Empty);	
 			}
@@ -227,7 +227,7 @@ namespace Kipunji.Controllers
 				return Json (error);
 			}
 			
-			string content = GetContent (model, id, type, true, text);
+			string content = null; //GetContent (model, id, type, true, text);
 			if (content == null) {
 				return Content (String.Empty);	
 			}

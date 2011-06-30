@@ -32,6 +32,7 @@ using System.Web;
 using System.Xml.Xsl;
 using System.Xml;
 using System.IO;
+using System.Web.Mvc;
 
 
 namespace Kipunji
@@ -46,8 +47,8 @@ namespace Kipunji
 				type = RemoveNamespaces (type);
 			return TypeToBuiltInType (type);
 		}
-		
-		public static string FormatType (string type, bool remove_ns)
+
+		public static MvcHtmlString FormatType (string type, bool remove_ns)
 		{
 			string ops;
 			
@@ -58,9 +59,9 @@ namespace Kipunji
 				type = RemoveNamespaces (type);
 			
 			if (ops != null)
-				return type + ops;
+				return new MvcHtmlString (type + ops);
 			
-			return type;
+			return new MvcHtmlString (type);
 		}
 		
 		private static string TypeToBuiltInType (string type)
@@ -126,28 +127,28 @@ namespace Kipunji
        	 	
 			return new string (s);
 		}
-		
-		public static string FormatMethodDisplaySignature (string name, List<Parameter> parameters, bool include_spans, bool html_encode)
+
+		public static MvcHtmlString FormatMethodDisplaySignature (string name, List<Parameter> parameters, bool include_spans, bool html_encode)
 		{
 			return FormatMethodSignature (name, parameters, true, include_spans, html_encode, true);
 		}
 
-		public static string FormatConstructorDisplaySignature (TypeModel parent_type, string name, List<Parameter> parameters, bool include_spans, bool html_encode)
+		public static MvcHtmlString FormatConstructorDisplaySignature (TypeModel parent_type, string name, List<Parameter> parameters, bool include_spans, bool html_encode)
 		{
 			return FormatMethodDisplaySignature (parent_type.DisplayName, parameters, include_spans, html_encode);
 		}
-		
-		public static string FormatMethodUrlSignature (string name, List<Parameter> parameters)
+
+		public static MvcHtmlString FormatMethodUrlSignature (string name, List<Parameter> parameters)
 		{
 			return FormatMethodSignature (name, parameters, false, false, false, false);
 		}
-		
-		public static string FormatConstructorUrlSignature (TypeModel parent_type, string name, List<Parameter> parameters)
+
+		public static MvcHtmlString FormatConstructorUrlSignature (TypeModel parent_type, string name, List<Parameter> parameters)
 		{	
 			return FormatMethodUrlSignature (name, parameters);
 		}
-		
-		private static string FormatMethodSignature (string name, List<Parameter> parameters, bool include_name, bool include_spans, bool html_encode, bool remove_ns)
+
+		private static MvcHtmlString FormatMethodSignature (string name, List<Parameter> parameters, bool include_name, bool include_spans, bool html_encode, bool remove_ns)
 		{
 			name = html_encode ? HttpUtility.HtmlEncode (name) : name;
 			
@@ -157,7 +158,7 @@ namespace Kipunji
 			string span_open = include_spans ? "<span>" : String.Empty;
 			string span_close = include_spans ? "</span>" : String.Empty;
 			foreach (var p in parameters) {
-				string param_type = html_encode ? HttpUtility.HtmlEncode (FormatType (p.Type, remove_ns)) : FormatType (p.Type, remove_ns);
+				string param_type = html_encode ? HttpUtility.HtmlEncode (FormatType (p.Type, remove_ns).ToString ()) : FormatType (p.Type, remove_ns).ToString ();
 				string param_name = html_encode ? HttpUtility.HtmlEncode (p.Name) : p.Name;
 				ret += string.Format (format, span_open, param_type, param_name, span_close);
 			}
@@ -165,18 +166,18 @@ namespace Kipunji
 			ret = ret.TrimEnd (' ', ',');
 			ret += ")";
 
-			return ret;
+			return new MvcHtmlString (ret);
 		}
 
-		
-		public static string FormatPropertySignature (string name)
+
+		public static MvcHtmlString FormatPropertySignature (string name)
 		{
-			return name;
+			return new MvcHtmlString (name);
 		}
 
-		public static string FormatFieldSignature (string name)
+		public static MvcHtmlString FormatFieldSignature (string name)
 		{
-			return name;
+			return new MvcHtmlString (name);
 		}
 
 		public static string FormatClassSignature (string name, string basetype, List<string> interfaces)
@@ -198,7 +199,7 @@ namespace Kipunji
 			return ret;
 		}
 
-		public static string FormatHtml (string raw)
+		public static MvcHtmlString FormatHtml (string raw)
 		{		
 			//EnsureTransform ();
 			
@@ -211,10 +212,10 @@ namespace Kipunji
 			//        XmlWriter.Create (output, ecma_transform.OutputSettings), null);
 
 			//return MakeLinks (output.ToString ());
-			return MakeLinks (raw);
+			return new MvcHtmlString (MakeLinks (raw));
 		}
 
-		public static string FormatTypeSignature (string root, TypeModel model)
+		public static MvcHtmlString FormatTypeSignature (string root, TypeModel model)
 		{
 			int p = 0;
 			string signature = model.Signature.Value;
@@ -255,8 +256,8 @@ namespace Kipunji
 			if (!bt_added)
 				res.Append ("</span>");
 			res.Append ("</td></tr></table>");
-			
-			return res.ToString ();
+
+			return new MvcHtmlString (res.ToString ());
 		}
 		
 		private static string MakeLinks(string content)
@@ -365,8 +366,8 @@ namespace Kipunji
 				buffer.Append (HttpUtility.HtmlEncode (">"));
 			}
 		}
-		
-		public static string CreateTypeLink (string root, string type)
+
+		public static MvcHtmlString CreateTypeLink (string root, string type)
 		{
 			StringBuilder res = new StringBuilder ();
 			
@@ -378,7 +379,7 @@ namespace Kipunji
 			case "TKey":
 			case "TValue":
 			case "T":
-				return type;
+				return new MvcHtmlString (type);
 			}
 			
 			for (int i = 0; i < type.Length; i++) {
@@ -408,7 +409,7 @@ namespace Kipunji
 			
 			Dump (root, type, res, first, 0);
 
-			return res.ToString ();
+			return new MvcHtmlString (res.ToString ());
 		}
 	}
 }
