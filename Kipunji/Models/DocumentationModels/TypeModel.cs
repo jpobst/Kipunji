@@ -173,10 +173,31 @@ namespace Kipunji.Models
 		}
 
 		public override string LongName { get { return string.Format ("{0}.{1}", Namespace, Name); } }
-		public override string Icon { get { return string.Format ("{0}.png", TypeIcon); } }
+		public override string Icon { get { return string.Format ("~/Images/Types/{0}.png", TypeIcon); } }
 		public override string Url { get { return TypeUrl; } }
-		
-		private string [] ParseParameterTypes (string p)
+
+		public IEnumerable<MemberModel> Constructors {
+			get { return Members.Where (p => p.Type == "Constructor"); }
+		}
+
+		public IEnumerable<MemberModel> Fields {
+			get { return Members.Where (p => p.Type == "Field"); }
+		}
+
+		public IEnumerable<MemberModel> Methods {
+			get { return Members.Where (p => p.Type == "Method" && !p.Signature.IsExplicitInterface); }
+		}
+
+		public IEnumerable<MemberModel> Properties {
+			get { return Members.Where (p => p.Type == "Property" && !p.Signature.IsExplicitInterface); }
+		}
+
+		public bool HasConstructors { get { return Constructors.Count () > 0; } }
+		public bool HasFields { get { return Fields.Count () > 0; } }
+		public bool HasMethods { get { return Methods.Count () > 0; } }
+		public bool HasProperties { get { return Properties.Count () > 0; } }
+
+		private string[] ParseParameterTypes (string p)
 		{
 			var res = new List<string> ();
 			var current = new StringBuilder ();

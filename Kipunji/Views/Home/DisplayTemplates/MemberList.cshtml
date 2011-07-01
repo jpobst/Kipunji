@@ -1,0 +1,11 @@
+﻿@model IEnumerable<Kipunji.Models.MemberModel>
+
+<table class="member-list indent">
+@foreach(var member in Model) {
+    <tr>
+        <td><img src="@Html.ResolveUrl(member.Icon)" /></td>
+        <td style="width: 400px;"><a href="@Html.ResolveUrl(member.MemberUrl)">@member.FormattedDisplaySignatureWithParams</a></td>
+        <td>@member.FormattedSummary</td>
+    </tr>
+}
+</table>

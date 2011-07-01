@@ -216,6 +216,18 @@
   <ItemGroup>
     <Content Include="Views\User\NotAnEditor.cshtml" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\DisplayTemplates\MemberList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\DisplayTemplates\NamespaceList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\DisplayTemplates\ParameterList.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\DisplayTemplates\TypeList.cshtml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

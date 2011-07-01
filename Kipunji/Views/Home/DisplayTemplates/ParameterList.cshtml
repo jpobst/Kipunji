@@ -1,0 +1,11 @@
+﻿@model List<Kipunji.Models.Parameter>
+
+<table class="indent" style="border: 0px">
+@foreach (var p in Model) {
+    <tr>
+        <td style="padding: 0 20px 0 0"><b><i>@p.Name</i></b></td>
+        <td style="padding: 0 20px 0 0">@Kipunji.Formatter.CreateTypeLink(VirtualPathUtility.ToAbsolute ("~/"), p.Type)</td>
+        <td><span class="description-params">@p.FormattedDescription</span></td>
+    </tr>
+}
+</table>

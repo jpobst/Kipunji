@@ -103,5 +103,26 @@ namespace Kipunji.Models
 			return results;
 			*/
 		}
+
+		public IEnumerable<TypeModel> Classes {
+			get { return Types.Where (p => p.Kind == "Class"); }
+		}
+
+		public IEnumerable<TypeModel> Structures {
+			get { return Types.Where (p => p.Kind == "Structure"); }
+		}
+
+		public IEnumerable<TypeModel> Interfaces {
+			get { return Types.Where (p => p.Kind == "Interface"); }
+		}
+
+		public IEnumerable<TypeModel> Enumerations {
+			get { return Types.Where (p => p.Kind == "Enumeration"); }
+		}
+
+		public bool HasClasses { get { return Classes.Count () > 0; } }
+		public bool HasStructures { get { return Structures.Count () > 0; } }
+		public bool HasInterfaces { get { return Interfaces.Count () > 0; } }
+		public bool HasEnumerations { get { return Enumerations.Count () > 0; } }
 	}
 }

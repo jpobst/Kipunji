@@ -1,0 +1,11 @@
+﻿@model IEnumerable<Kipunji.Models.TypeModel>
+
+<table class="member-list indent">
+@foreach (var type in Model) {
+    <tr>
+	    <td><img src="@Html.ResolveUrl(type.Icon)" /></td>
+	    <td style="width: 150px;"><a href="@Html.ResolveUrl(type.TypeUrl)">@HttpUtility.HtmlEncode(type.DisplayName)</a></td>
+	    <td><span class="summary">@type.FormattedSummary</span></td>
+    </tr>
+}
+</table>

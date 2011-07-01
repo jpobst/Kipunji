@@ -1,0 +1,11 @@
+﻿@model List<Kipunji.Models.NamespaceModel>
+
+<table class="member-list indent">
+@foreach(var prop in Model) {
+    <tr>
+        <td><img src="@Html.ResolveUrl("~/Images/Types/pubnamespace.png")" /></td>
+        <td style="width: 200px;"><a href="@Html.ResolveUrl(prop.NamespaceUrl)">@prop.Name</a></td>
+        <td><span class="summary">@prop.FormattedSummary</span></td>
+    </tr>
+}
+</table>
