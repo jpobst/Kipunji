@@ -1,25 +1,21 @@
 ﻿@model Kipunji.Models.TypeModel
 
-    <div class="right-content-pad">
-        <p class="indent">The <a href="@Html.ResolveUrl(Model.TypeUrl)">@Model.Name</a> @Model.Kind exposes the following members.</p>
+@if(Model.HasConstructors) {
+    <h2>Constructors</h2>
+    @Html.DisplayFor(m => m.Constructors, "MemberList")
+}
 		
-        @if(Model.HasConstructors) {
-            <h2>Constructors</h2>
-            @Html.DisplayFor(m => m.Constructors, "MemberList")
-        }
+@if (Model.HasFields) {
+    <h2>Fields</h2>
+    @Html.DisplayFor(m => m.Fields, "MemberList")
+}
 		
-        @if (Model.HasFields) {
-            <h2>Fields</h2>
-            @Html.DisplayFor(m => m.Fields, "MemberList")
-        }
+@if (Model.HasMethods) {
+    <h2>Methods</h2>
+    @Html.DisplayFor(m => m.Methods, "MemberList")
+}
 		
-        @if (Model.HasMethods) {
-            <h2>Methods</h2>
-            @Html.DisplayFor(m => m.Methods, "MemberList")
-        }
-		
-        @if (Model.HasProperties) {
-            <h2>Properties</h2>
-            @Html.DisplayFor(m => m.Properties, "MemberList")
-        }
-   </div>
+@if (Model.HasProperties) {
+    <h2>Properties</h2>
+    @Html.DisplayFor(m => m.Properties, "MemberList")
+}

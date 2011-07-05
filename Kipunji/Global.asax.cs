@@ -23,7 +23,8 @@ namespace Kipunji
 
 			routes.MapRoute ("path", "{path}", new { controller = "Home", action = "Index" });
 
-			routes.MapRoute ("typemembers", "{type_path}/Members", new { controller = "Home", action = "Members" });
+			// We no longer have a separate page for this, just here for compatibility
+			routes.MapRoute ("typemembers", "{path}/Members", new { controller = "Home", action = "Index" });
 
 			routes.MapRoute (
 			    "Default", // Route name

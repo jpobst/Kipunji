@@ -68,36 +68,6 @@ namespace Kipunji.Controllers
 			// This should never be hit, but just in case
 			return UnrecognizedRequest (path);
 		}
-
-		// The user has given us a type ("System.String"), and
-		// wants to see the members on the type
-		// ex: http://localhost/mscorlib.dll/System.String/Members
-		public ActionResult Members (string type_path)
-		{
-			var types = RequestDecoder.Parse (type_path, true);
-			
-			if (types.Count > 1)
-				return Disambiguation (types);
-			
-			if (types.Count < 1)
-				return UnrecognizedRequest (type_path);
-
-			// Make a complete type, not a shallow one
-			var type = (TypeModel) types [0];
-
-			// Build the breadcrumb menu
-			BreadCrumb bc = new BreadCrumb ();
-
-			bc.Crumbs.Add (new Crumb ("Home", "~", "home"));
-			bc.Crumbs.Add (new Crumb (type.Namespace, type.NamespaceUrl, "namespace"));
-			bc.Crumbs.Add (new Crumb (type.Name, type.TypeUrl, type.TypeIcon));
-			bc.Crumbs.Add (new Crumb ("Members", null, "members"));
-
-			ViewData["BreadCrumb"] = bc;
-			ViewData["Title"] = string.Format ("{0} Members", type.DisplayName);
-
-			return View ("Members", type);
-		}
 		
 		// The user has not requested anything, show the
 		// list of assemblies we provide documentation for
