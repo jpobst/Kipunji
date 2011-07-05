@@ -24,7 +24,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Web;
 using System.Web.Mvc;
+using Kipunji;
 
 public static class IncludeExtensions
 {
@@ -124,5 +126,36 @@ public static class IncludeExtensions
 	public static string ToHoursMinSec (this TimeSpan diff)
 	{
 		return string.Format ("{0:00}:{1:00}:{2:00}", diff.Hours, diff.Minutes, diff.Seconds);
+	}
+
+	/// <summary>
+	/// Create a member link and optionally a return type link: "Substring (int start, int end) : string"
+	/// </summary>
+	public static MvcHtmlString FormatMemberListDisplay (this HtmlHelper html, Kipunji.Models.MemberModel member)
+	{
+		// The link for the member signature
+		var member_tag = new TagBuilder ("a");
+
+		member_tag.MergeAttribute ("href", html.ResolveUrl (member.MemberUrl));
+		member_tag.InnerHtml = member.FormattedDisplaySignatureWithParams.ToString ();
+
+		// If we have a return type, add it
+		if (!string.IsNullOrWhiteSpace (member.ReturnType) && member.ReturnType != "System.Void") {
+			var return_link = Formatter.CreateTypeLink (VirtualPathUtility.ToAbsolute ("~/"), member.ReturnType).ToString ();
+
+			// We want to replace namespaced stuff with just a type name:
+			// System.String -> String
+			if (return_link.Contains ("<")) {
+				int close = return_link.IndexOf ('>');
+				int open = return_link.IndexOf ('<', close);
+
+				return_link = return_link.Remove (close + 1, open - close - 1);
+				return_link = return_link.Insert (close + 1, member.FormattedReturnType.ToString ());
+			}
+
+			return new MvcHtmlString (member_tag.ToString () + " : " + return_link);
+		}
+
+		return new MvcHtmlString (member_tag.ToString ());
 	}
 }
