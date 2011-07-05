@@ -122,10 +122,13 @@
     <Content Include="Images\Types\protenumeration.png" />
     <Content Include="Images\Types\protevent.png" />
     <Content Include="Images\Types\protextension.png" />
+    <Content Include="Images\Types\protfield-static.png" />
     <Content Include="Images\Types\protfield.png" />
     <Content Include="Images\Types\protinterface.png" />
+    <Content Include="Images\Types\protmethod-static.png" />
     <Content Include="Images\Types\protmethod.png" />
     <Content Include="Images\Types\protoperator.png" />
+    <Content Include="Images\Types\protproperty-static.png" />
     <Content Include="Images\Types\protproperty.png" />
     <Content Include="Images\Types\protstructure.png" />
     <Content Include="Images\Types\pubclass.png" />
@@ -134,10 +137,13 @@
     <Content Include="Images\Types\pubenumeration.png" />
     <Content Include="Images\Types\pubevent.png" />
     <Content Include="Images\Types\pubextension.png" />
+    <Content Include="Images\Types\pubfield-static.png" />
     <Content Include="Images\Types\pubfield.png" />
     <Content Include="Images\Types\pubinterface.png" />
+    <Content Include="Images\Types\pubmethod-static.png" />
     <Content Include="Images\Types\pubmethod.png" />
     <Content Include="Images\Types\puboperator.png" />
+    <Content Include="Images\Types\pubproperty-static.png" />
     <Content Include="Images\Types\pubproperty.png" />
     <Content Include="Images\Types\pubstructure.png" />
     <Content Include="Images\Types\reference.png" />

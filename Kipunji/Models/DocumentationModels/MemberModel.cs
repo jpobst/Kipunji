@@ -152,7 +152,12 @@ namespace Kipunji.Models
 					default: value2 = Type.ToLowerInvariant (); break;
 				}
 
-				return string.Format ("{0}{1}", value, value2);
+				var retval = string.Format ("{0}{1}", value, value2);
+
+				if (Signature.Value.Contains (" static "))
+					retval += "-static";
+
+				return retval;
 			}
 		}
 
