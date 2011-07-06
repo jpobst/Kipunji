@@ -192,10 +192,15 @@ namespace Kipunji.Models
 			get { return Members.Where (p => p.Type == "Property" && !p.Signature.IsExplicitInterface); }
 		}
 
+		public IEnumerable<MemberModel> Events {
+			get { return Members.Where (p => p.Type == "Event"); }
+		}
+
 		public bool HasConstructors { get { return Constructors.Count () > 0; } }
 		public bool HasFields { get { return Fields.Count () > 0; } }
 		public bool HasMethods { get { return Methods.Count () > 0; } }
 		public bool HasProperties { get { return Properties.Count () > 0; } }
+		public bool HasEvents { get { return Events.Count () > 0; } }
 
 		private string[] ParseParameterTypes (string p)
 		{

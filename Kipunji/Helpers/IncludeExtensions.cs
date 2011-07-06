@@ -140,7 +140,7 @@ public static class IncludeExtensions
 		member_tag.InnerHtml = member.FormattedDisplaySignatureWithParams.ToString ();
 
 		// If we have a return type, add it
-		if (!string.IsNullOrWhiteSpace (member.ReturnType) && member.ReturnType != "System.Void") {
+		if (!string.IsNullOrWhiteSpace (member.ReturnType) && member.ReturnType != "System.Void" && member.Type != "Event") {
 			var return_link = Formatter.CreateTypeLink (VirtualPathUtility.ToAbsolute ("~/"), member.ReturnType).ToString ();
 
 			// We want to replace namespaced stuff with just a type name:

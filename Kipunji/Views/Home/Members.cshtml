@@ -19,3 +19,8 @@
     <h2>Methods</h2>
     @Html.DisplayFor(m => m.Methods, "MemberList")
 }
+		
+@if (Model.HasEvents) {
+    <h2>Events</h2>
+    @Html.DisplayFor(m => m.Events, "MemberList")
+}
