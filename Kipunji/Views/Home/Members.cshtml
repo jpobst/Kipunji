@@ -10,12 +10,12 @@
     @Html.DisplayFor(m => m.Fields, "MemberList")
 }
 		
-@if (Model.HasMethods) {
-    <h2>Methods</h2>
-    @Html.DisplayFor(m => m.Methods, "MemberList")
-}
-		
 @if (Model.HasProperties) {
     <h2>Properties</h2>
     @Html.DisplayFor(m => m.Properties, "MemberList")
+}
+		
+@if (Model.HasMethods) {
+    <h2>Methods</h2>
+    @Html.DisplayFor(m => m.Methods, "MemberList")
 }
