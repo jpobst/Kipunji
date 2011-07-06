@@ -170,6 +170,11 @@ namespace Kipunji
 		}
 
 
+		public static MvcHtmlString FormatEventSignature (string name)
+		{
+			return new MvcHtmlString (name);
+		}
+
 		public static MvcHtmlString FormatPropertySignature (string name)
 		{
 			return new MvcHtmlString (name);

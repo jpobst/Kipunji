@@ -56,6 +56,8 @@ namespace Kipunji.Models
 					return Formatter.FormatPropertySignature (Name);
 				if (Type == "Field")
 					return Formatter.FormatFieldSignature (Name);
+				if (Type == "Event")
+					return Formatter.FormatEventSignature (Name);
 
 				return Formatter.FormatMethodDisplaySignature (Name, Parameters, false, false);
 			}
@@ -69,6 +71,8 @@ namespace Kipunji.Models
 					return Formatter.FormatPropertySignature (Name);
 				if (Type == "Field")
 					return Formatter.FormatFieldSignature (Name);
+				if (Type == "Event")
+					return Formatter.FormatEventSignature (Name);
 
 				return Formatter.FormatMethodDisplaySignature (Name, Parameters, true, true);
 			}
